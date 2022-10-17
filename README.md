@@ -1,7 +1,8 @@
 Contributors:
 
 Orson Lento;
-Mathlide Raby;
+Mathilde Raby;
 Niamsoooo Amtoun;
-Nicolas Perez Burbano;
-Noémie Gerard
+Nicolàs Perez Burbano;
+Noémie Gerard;
+C TOUUUUT 
