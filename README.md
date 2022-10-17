@@ -3,5 +3,5 @@ Contributors:
 Orson Lento;
 Mathlide Raby;
 Niama Amtoun;
-Nicolas Perez Burbano;
+Nicolás Pérez Burbano;
 Noémie Gerard
