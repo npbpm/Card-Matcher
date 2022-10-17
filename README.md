@@ -1,2 +1,1 @@
-Contributors: 
-RABY Mathilde 
+Orson Lento
