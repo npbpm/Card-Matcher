@@ -2,6 +2,6 @@ Contributors:
 
 Orson Lento;
 Mathlide Raby;
-Niama Amtoun;
+Niamsoooo Amtoun;
 Nicolas Perez Burbano;
 Noémie Gerard
