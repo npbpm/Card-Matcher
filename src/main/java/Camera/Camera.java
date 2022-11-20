@@ -14,6 +14,7 @@ import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.DateFormat;
@@ -58,7 +59,9 @@ public class Camera extends JFrame {
 	private Mat image;
 
 	private boolean clicked = false;
-
+	
+	private static String userDirectory = System.getProperty("user.dir");
+			
 	public Camera() {
 
 		// Designing UI
@@ -136,6 +139,16 @@ public class Camera extends JFrame {
 	// Main driver method
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		
+		/*
+		 * Creation of the Apprentissage and Test Folders
+		 * */
+		File apprentissage = new File(userDirectory + "/Apprentissage");
+		apprentissage.mkdirs();
+		
+		File test = new File(userDirectory + "/Test");
+		test.mkdirs();
+		
 		EventQueue.invokeLater(new Runnable() {
 			// Overriding existing run() method
 			public void run() {
