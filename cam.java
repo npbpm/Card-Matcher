@@ -32,6 +32,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -41,7 +42,7 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 // Class - Swing Class
-public class cam extends JFrame {
+public class Cam extends JFrame {
 
 	// Camera screen
 	private JLabel cameraScreen;
@@ -59,7 +60,7 @@ public class cam extends JFrame {
 
 	private boolean clicked = false;
 
-	public cam() {
+	public Cam() {
 
 		// Designing UI
 		setLayout(null);
@@ -125,8 +126,11 @@ public class cam extends JFrame {
 					name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
 				}
 
-				// Write to file
-				Imgcodecs.imwrite("images/" + name + ".jpg", image);
+				// Crop and Write to file
+				Rect rectCrop = new Rect(pt1,pt2);
+				Mat image_crop = new Mat(image,rectCrop);
+				
+				Imgcodecs.imwrite("images/" + name + ".jpg", image_crop);
 
 				clicked = false;
 			}
@@ -139,7 +143,7 @@ public class cam extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			// Overriding existing run() method
 			public void run() {
-				final cam camera = new cam();
+				final Cam camera = new Cam();
 
 				// Start camera in thread
 				new Thread(new Runnable() {
