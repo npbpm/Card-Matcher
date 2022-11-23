@@ -58,27 +58,44 @@ public class Camera extends JFrame {
 	// Store image as 2D matrix
 	private Mat image;
 
+	// Select the folder to use
+	private JButton btnFolderChoice;
+	private String folder;
+	private String folderPath;
+
 	private boolean clicked = false;
-	
+
 	private static String userDirectory = System.getProperty("user.dir");
-			
+
 	public Camera() {
 
 		// Designing UI
 		setLayout(null);
 
+		// screen
 		cameraScreen = new JLabel();
 		cameraScreen.setBounds(0, 0, 640, 480);
 		add(cameraScreen);
 
+		// capture button
 		btnCapture = new JButton("capture");
-		btnCapture.setBounds(300, 480, 80, 40);
+		btnCapture.setBounds(200, 480, 80, 40);
 		add(btnCapture);
 
 		btnCapture.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
 				clicked = true;
+			}
+		});
+
+		// folder button
+		btnFolderChoice = new JButton ("folder");
+		btnFolderChoice.setBounds(400, 480, 80, 40);
+		add(btnFolderChoice);
+		btnFolderChoice.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				folderPath = JOptionPane.showInputDialog("Select the path to the folder you want to use:");
 			}
 		});
 
@@ -100,7 +117,7 @@ public class Camera extends JFrame {
 		while (true) {
 			// read image to matrix
 			capture.read(image);
-			
+
 			// create red rectangle 
 			Mat src= image;   //where the rectangle has to appear
 			Size s=src.size();
@@ -129,26 +146,31 @@ public class Camera extends JFrame {
 				}
 
 				// Write to file
-				Imgcodecs.imwrite("images/" + name + ".jpg", image);
-
-				clicked = false;
+				if (folderPath==null) {
+					Imgcodecs.imwrite("images/" + name + ".jpg", image);
+				}
+				else {
+					Imgcodecs.imwrite(folderPath + name + ".jpg", image);
+				}
 			}
+			clicked = false;
 		}
 	}
+
 
 	// Main driver method
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		
+
 		/*
 		 * Creation of the Apprentissage and Test Folders
 		 * */
 		File apprentissage = new File(userDirectory + "/Apprentissage");
 		apprentissage.mkdirs();
-		
+
 		File test = new File(userDirectory + "/Test");
 		test.mkdirs();
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			// Overriding existing run() method
 			public void run() {
