@@ -34,6 +34,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -74,7 +75,7 @@ public class Camera extends JFrame {
 
 	// Path
 
-	private String path = "iamges/";
+	private String path = userDirectory + "/Apprentissage/";
 
 	public Camera() {
 
@@ -161,8 +162,12 @@ public class Camera extends JFrame {
 					name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
 				}
 
-				// Write to file
-				Imgcodecs.imwrite(path + name + ".jpg", image);
+				// Write to file + crop
+				
+				Rect rectCrop = new Rect(pt1,pt2);
+				Mat image_crop = new Mat(image,rectCrop);
+
+				Imgcodecs.imwrite(userDirectory + "/Test" + name + ".jpg", image_crop);
 
 				clicked_test = false;
 			}
@@ -176,8 +181,12 @@ public class Camera extends JFrame {
 					name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
 				}
 
-				// Write to file
-				Imgcodecs.imwrite(path + name + ".jpg", image);
+				// Write to file + crop
+
+				Rect rectCrop = new Rect(pt1,pt2);
+				Mat image_crop = new Mat(image,rectCrop);
+
+				Imgcodecs.imwrite(path + name + ".jpg", image_crop);
 
 				clicked_save = false;
 			}
@@ -192,8 +201,8 @@ public class Camera extends JFrame {
 
 				if (dialogue.getSelectedFile() != null) {
 					System.out.println("Dossier choisi : " + dialogue.getSelectedFile());
-					
-					path = dialogue.getSelectedFile().getName();
+
+					path = dialogue.getSelectedFile().toString() + "/";
 				}
 				clicked_bdd = false;
 			}
