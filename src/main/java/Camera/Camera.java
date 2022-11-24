@@ -24,6 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -48,9 +49,13 @@ public class Camera extends JFrame {
 	private JLabel cameraScreen;
 
 	// Button for image capture
-	private JButton btnCapture;
+	private JButton test;
 
-	private JButton rectangle;
+	private JButton save;
+
+	// Button for data base selection
+
+	private JButton select_db;
 
 	// Start camera
 	private VideoCapture capture;
@@ -58,10 +63,19 @@ public class Camera extends JFrame {
 	// Store image as 2D matrix
 	private Mat image;
 
-	private boolean clicked = false;
-	
+	// True si l'utilisateur a cliqué sur le mode test
+	private boolean clicked_test = false;
+
+	private boolean clicked_save = false;
+
+	private boolean clicked_bdd = false;
+
 	private static String userDirectory = System.getProperty("user.dir");
-			
+
+	// Path
+
+	private String path = "iamges/";
+
 	public Camera() {
 
 		// Designing UI
@@ -71,14 +85,33 @@ public class Camera extends JFrame {
 		cameraScreen.setBounds(0, 0, 640, 480);
 		add(cameraScreen);
 
-		btnCapture = new JButton("capture");
-		btnCapture.setBounds(300, 480, 80, 40);
-		add(btnCapture);
+		test = new JButton("Tester");
+		test.setBounds(210, 480, 80, 40);
+		add(test);
 
-		btnCapture.addActionListener(new ActionListener() {
+		save = new JButton("Enregistrer");
+		save.setBounds(310, 480, 80, 40);
+		add(save);
+
+		select_db = new JButton("Sélectionner une bdd ...");
+		select_db.setBounds(0, 480, 170, 40);
+		add(select_db);
+
+		test.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				clicked_test = true;
+			}
+		});
 
-				clicked = true;
+		save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clicked_save = true;
+			}
+		});
+
+		select_db.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clicked_bdd = true;
 			}
 		});
 
@@ -100,15 +133,15 @@ public class Camera extends JFrame {
 		while (true) {
 			// read image to matrix
 			capture.read(image);
-			
-			// create red rectangle 
-			Mat src= image;   //where the rectangle has to appear
-			Size s=src.size();
-			Point pt1 = new Point(s.width-200,s.height-300);    // top-left corner of the rectangle
-			Point pt2 = new Point(s.width,s.height);            // bottom-right corner of the rectangle
-			Scalar color = new Scalar(0,0,255);                 // choice of color (RGB)
-			int th = 5;                                         // choice of thickness
-			Imgproc.rectangle(src, pt1, pt2,color,th);          // creation
+
+			// create red rectangle
+			Mat src = image; // where the rectangle has to appear
+			Size s = src.size();
+			Point pt1 = new Point(s.width - 200, s.height - 300); // top-left corner of the rectangle
+			Point pt2 = new Point(s.width, s.height); // bottom-right corner of the rectangle
+			Scalar color = new Scalar(0, 0, 255); // choice of color (RGB)
+			int th = 5; // choice of thickness
+			Imgproc.rectangle(src, pt1, pt2, color, th); // creation
 
 			// convert matrix to byte
 			final MatOfByte buf = new MatOfByte();
@@ -121,7 +154,7 @@ public class Camera extends JFrame {
 			cameraScreen.setIcon(icon);
 
 			// Capture and save to file
-			if (clicked) {
+			if (clicked_test) {
 				// prompt for enter image name
 				String name = JOptionPane.showInputDialog(this, "Enter image name");
 				if (name == null) {
@@ -129,9 +162,40 @@ public class Camera extends JFrame {
 				}
 
 				// Write to file
-				Imgcodecs.imwrite("images/" + name + ".jpg", image);
+				Imgcodecs.imwrite(path + name + ".jpg", image);
 
-				clicked = false;
+				clicked_test = false;
+			}
+
+			// A sauvegarder dans des dossiers séparés après
+
+			if (clicked_save) {
+				// prompt for enter image name
+				String name = JOptionPane.showInputDialog(this, "Enter image name");
+				if (name == null) {
+					name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
+				}
+
+				// Write to file
+				Imgcodecs.imwrite(path + name + ".jpg", image);
+
+				clicked_save = false;
+			}
+
+			if (clicked_bdd) {
+
+				JFileChooser dialogue = new JFileChooser();
+
+				dialogue.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+				dialogue.showOpenDialog(null);
+
+				if (dialogue.getSelectedFile() != null) {
+					System.out.println("Dossier choisi : " + dialogue.getSelectedFile());
+					
+					path = dialogue.getSelectedFile().getName();
+				}
+				clicked_bdd = false;
 			}
 		}
 	}
@@ -139,16 +203,16 @@ public class Camera extends JFrame {
 	// Main driver method
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		
+
 		/*
 		 * Creation of the Apprentissage and Test Folders
-		 * */
+		 */
 		File apprentissage = new File(userDirectory + "/Apprentissage");
 		apprentissage.mkdirs();
-		
+
 		File test = new File(userDirectory + "/Test");
 		test.mkdirs();
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			// Overriding existing run() method
 			public void run() {
