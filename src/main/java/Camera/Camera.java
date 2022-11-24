@@ -15,6 +15,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.DateFormat;
@@ -167,7 +169,7 @@ public class Camera extends JFrame {
 				Rect rectCrop = new Rect(pt1,pt2);
 				Mat image_crop = new Mat(image,rectCrop);
 
-				Imgcodecs.imwrite(userDirectory + "/Test" + name + ".jpg", image_crop);
+				Imgcodecs.imwrite(userDirectory + "/Test/" + name + ".jpg", image_crop);
 
 				clicked_test = false;
 			}
@@ -217,10 +219,17 @@ public class Camera extends JFrame {
 		 * Creation of the Apprentissage and Test Folders
 		 */
 		File apprentissage = new File(userDirectory + "/Apprentissage");
-		apprentissage.mkdirs();
+		if(apprentissage.exists()) {
+			System.out.println("Le dossier existe");
+			apprentissage.delete();
+		}
+		apprentissage.mkdir();
 
 		File test = new File(userDirectory + "/Test");
-		test.mkdirs();
+		if(test.exists()) {
+			test.delete();
+		}
+		test.mkdir();
 
 		EventQueue.invokeLater(new Runnable() {
 			// Overriding existing run() method
