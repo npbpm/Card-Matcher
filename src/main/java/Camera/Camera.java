@@ -132,10 +132,10 @@ public class Camera extends JFrame {
 			// create red rectangle
 			Mat src = image; // where the rectangle has to appear
 			Size s = src.size();
-			Point pt1 = new Point(s.width - 200, s.height - 300); // top-left corner of the rectangle
-			Point pt2 = new Point(s.width, s.height); // bottom-right corner of the rectangle
-			Scalar color = new Scalar(0, 0, 255); // choice of color (RGB)
-			int th = 5; // choice of thickness
+			Point pt1 = new Point(s.width - 250, s.height - 350); // top-left corner of the rectangle
+			Point pt2 = new Point(s.width-100, s.height-100); // bottom-right corner of the rectangle
+			Scalar color = new Scalar(0, 0, 0); // choice of color (RGB)
+			int th = 2; // choice of thickness
 			Imgproc.rectangle(src, pt1, pt2, color, th); // creation
 
 			// convert matrix to byte
@@ -160,8 +160,10 @@ public class Camera extends JFrame {
 				
 				Rect rectCrop = new Rect(pt1,pt2);
 				Mat image_crop = new Mat(image,rectCrop);
+				Mat bw = new Mat();
+			    Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
 
-				Imgcodecs.imwrite(userDirectory + "/Test/" + name + ".jpg", image_crop);
+				Imgcodecs.imwrite(userDirectory + "/Test/" + name + ".jpg", bw);
 
 				clicked_test = false;
 			}
