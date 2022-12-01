@@ -41,6 +41,9 @@ import org.opencv.imgproc.Imgproc;
 // This class is responsible for taking screenshot
 import org.opencv.videoio.VideoCapture;
 
+import Buttons.CaptureButton;
+import Buttons.FolderButton;
+
 // Class - Swing Class
 public class Camera extends JFrame {
 
@@ -60,13 +63,17 @@ public class Camera extends JFrame {
 
 	// Select the folder to use
 	private JButton btnFolderChoice;
-	private String folder;
 	private String folderPath;
 
 	private boolean clicked = false;
 
 	private static String userDirectory = System.getProperty("user.dir");
-
+	public void changeClicked() {
+		clicked= clicked;
+	}
+	public void changeFolderPath(String sentence) {
+		folderPath = JOptionPane.showInputDialog(sentence);
+	}
 	public Camera() {
 
 		// Designing UI
@@ -78,26 +85,10 @@ public class Camera extends JFrame {
 		add(cameraScreen);
 
 		// capture button
-		btnCapture = new JButton("capture");
-		btnCapture.setBounds(200, 480, 80, 40);
-		add(btnCapture);
-
-		btnCapture.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				clicked = true;
-			}
-		});
+		btnCapture = new CaptureButton(this);
 
 		// folder button
-		btnFolderChoice = new JButton ("folder");
-		btnFolderChoice.setBounds(400, 480, 80, 40);
-		add(btnFolderChoice);
-		btnFolderChoice.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				folderPath = JOptionPane.showInputDialog("Select the path to the folder you want to use:");
-			}
-		});
+		btnFolderChoice = new FolderButton (this);
 
 		setSize(new Dimension(640, 560));
 		setLocationRelativeTo(null);
