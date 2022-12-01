@@ -7,29 +7,18 @@
 // Importing openCV modules
 package Camera;
 
-import java.awt.Color;
 // importing swing and awt classes
 import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 // Importing date class of sql package
 import java.sql.Date;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
@@ -53,8 +42,6 @@ public class Camera extends JFrame {
 	// Button for image capture
 	private JButton btnCapture;
 
-	private JButton rectangle;
-
 	// Start camera
 	private VideoCapture capture;
 
@@ -67,9 +54,9 @@ public class Camera extends JFrame {
 
 	private boolean clicked = false;
 
-	private static String userDirectory = System.getProperty("user.dir");
+
 	public void changeClicked() {
-		clicked= clicked;
+		clicked= !clicked;
 	}
 	public void changeFolderPath(String sentence) {
 		folderPath = JOptionPane.showInputDialog(sentence);
@@ -112,9 +99,9 @@ public class Camera extends JFrame {
 			// create red rectangle 
 			Mat src= image;   //where the rectangle has to appear
 			Size s=src.size();
-			Point pt1 = new Point(s.width-200,s.height-300);    // top-left corner of the rectangle
-			Point pt2 = new Point(s.width,s.height);            // bottom-right corner of the rectangle
-			Scalar color = new Scalar(0,0,255);                 // choice of color (RGB)
+			Point pt1 = new Point(s.width-250,s.height-350);    // top-left corner of the rectangle
+			Point pt2 = new Point(s.width-100,s.height-100);            // bottom-right corner of the rectangle
+			Scalar color = new Scalar(0,0,0);                 // choice of color (RGB)
 			int th = 5;                                         // choice of thickness
 			Imgproc.rectangle(src, pt1, pt2,color,th);          // creation
 
@@ -146,34 +133,5 @@ public class Camera extends JFrame {
 			}
 			clicked = false;
 		}
-	}
-
-
-	// Main driver method
-	public static void main(String[] args) {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-
-		/*
-		 * Creation of the Apprentissage and Test Folders
-		 * */
-		File apprentissage = new File(userDirectory + "/Apprentissage");
-		apprentissage.mkdirs();
-
-		File test = new File(userDirectory + "/Test");
-		test.mkdirs();
-
-		EventQueue.invokeLater(new Runnable() {
-			// Overriding existing run() method
-			public void run() {
-				final Camera camera = new Camera();
-
-				// Start camera in thread
-				new Thread(new Runnable() {
-					public void run() {
-						camera.startCamera();
-					}
-				}).start();
-			}
-		});
 	}
 }
