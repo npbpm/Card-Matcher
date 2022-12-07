@@ -7,30 +7,22 @@
 // Importing openCV modules
 package Camera;
 
-import java.awt.Color;
 // importing swing and awt classes
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 // Importing date class of sql package
 import java.sql.Date;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -222,14 +214,23 @@ public class Camera extends JFrame {
 		 */
 		File apprentissage = new File(userDirectory + "/Apprentissage");
 		if(apprentissage.exists()) {
-			System.out.println("Le dossier existe");
-			apprentissage.delete();
+			String[] entries = apprentissage.list();
+			for(String s: entries) {
+				File currentFile = new File(apprentissage.getPath(),s);
+				currentFile.delete();
+			}
+//			apprentissage.delete();
 		}
 		apprentissage.mkdir();
 
 		File test = new File(userDirectory + "/Test");
 		if(test.exists()) {
-			test.delete();
+			String[] entries = test.list();
+			for(String s: entries) {
+				File currentFile = new File(test.getPath(),s);
+				currentFile.delete();
+			}
+//			test.delete();
 		}
 		test.mkdir();
 
