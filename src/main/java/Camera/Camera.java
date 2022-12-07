@@ -9,10 +9,6 @@ package Camera;
 
 // importing swing and awt classes
 import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -24,7 +20,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
@@ -37,20 +32,19 @@ import org.opencv.imgproc.Imgproc;
 // This class is responsible for taking screenshot
 import org.opencv.videoio.VideoCapture;
 
+import Buttons.TestButton;
+import Buttons.dbButton;
+import Buttons.SaveButton;
+
 // Class - Swing Class
 public class Camera extends JFrame {
 
 	// Camera screen
 	private JLabel cameraScreen;
 
-	// Button for image capture
-	private JButton test;
-
-	private JButton save;
-
-	// Button for data base selection
-
-	private JButton select_db;
+	// Buttons
+	private JButton btnCapture;
+	private JButton btnDB;
 
 	// Start camera
 	private VideoCapture capture;
@@ -58,57 +52,53 @@ public class Camera extends JFrame {
 	// Store image as 2D matrix
 	private Mat image;
 
+	// Select the folder to use
+	private JButton btnFolderChoice;
+	private String folderPath;
+
 	// True si l'utilisateur a cliqué sur le mode test
-	private boolean clicked_test = false;
-
-	private boolean clicked_save = false;
-
-	private boolean clicked_bdd = false;
-
-	private static String userDirectory = System.getProperty("user.dir");
+	public boolean clicked_test = false;
+	public boolean clicked_save = false;
+	public boolean clicked_bdd = false;
 
 	// Path
+	private static String userDirectory ;
+	private String path ;
 
-	private String path = userDirectory + "/Apprentissage/";
 
-	public Camera() {
-
+	public void changeClickedTest() {
+		clicked_test= !clicked_test;
+		System.out.println(clicked_test);
+	}
+	
+	public void changeClickedSave() {
+		clicked_save= !clicked_save;
+		System.out.println(clicked_save);
+	}
+	public void changeClickedBDD() {
+		clicked_bdd= !clicked_bdd;
+		System.out.println(clicked_bdd);
+	}
+	public void changeFolderPath(String sentence) {
+		folderPath = JOptionPane.showInputDialog(sentence);
+	}
+	public Camera(String Directory) {
+		userDirectory = System.getProperty("user.dir");
+		path = userDirectory + "/Apprentissage/";
 		// Designing UI
 		setLayout(null);
 
+		// screen
 		cameraScreen = new JLabel();
 		cameraScreen.setBounds(0, 0, 640, 480);
 		add(cameraScreen);
 
-		test = new JButton("Tester");
-		test.setBounds(210, 480, 80, 40);
-		add(test);
-
-		save = new JButton("Enregistrer");
-		save.setBounds(310, 480, 80, 40);
-		add(save);
-
-		select_db = new JButton("Sélectionner une bdd ...");
-		select_db.setBounds(0, 480, 170, 40);
-		add(select_db);
-
-		test.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clicked_test = true;
-			}
-		});
-
-		save.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clicked_save = true;
-			}
-		});
-
-		select_db.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				clicked_bdd = true;
-			}
-		});
+		// capture button
+		btnCapture = new TestButton(this);
+		// folder button
+		btnFolderChoice = new SaveButton (this);
+		// folder button
+		btnDB = new dbButton (this);
 
 		setSize(new Dimension(640, 560));
 		setLocationRelativeTo(null);
@@ -129,14 +119,14 @@ public class Camera extends JFrame {
 			// read image to matrix
 			capture.read(image);
 
-			// create red rectangle
-			Mat src = image; // where the rectangle has to appear
-			Size s = src.size();
-			Point pt1 = new Point(s.width - 250, s.height - 350); // top-left corner of the rectangle
-			Point pt2 = new Point(s.width-100, s.height-100); // bottom-right corner of the rectangle
-			Scalar color = new Scalar(0, 0, 0); // choice of color (RGB)
-			int th = 2; // choice of thickness
-			Imgproc.rectangle(src, pt1, pt2, color, th); // creation
+			// create rectangle 
+			Mat src= image;   //where the rectangle has to appear
+			Size s=src.size();
+			Point pt1 = new Point(s.width-250,s.height-350);    // top-left corner of the rectangle
+			Point pt2 = new Point(s.width-100,s.height-100);            // bottom-right corner of the rectangle
+			Scalar color = new Scalar(0,0,0);                 // choice of color (RGB)
+			int th = 2;                                         // choice of thickness
+			Imgproc.rectangle(src, pt1, pt2,color,th);          // creation
 
 			// convert matrix to byte
 			final MatOfByte buf = new MatOfByte();
@@ -147,9 +137,9 @@ public class Camera extends JFrame {
 			// Add to JLabel
 			icon = new ImageIcon(imageData);
 			cameraScreen.setIcon(icon);
-
 			// Capture and save to file
 			if (clicked_test) {
+				System.out.println("Entering");
 				// prompt for enter image name
 				String name = JOptionPane.showInputDialog(this, "Enter image name");
 				if (name == null) {
@@ -157,11 +147,11 @@ public class Camera extends JFrame {
 				}
 
 				// Write to file + crop
-				
+
 				Rect rectCrop = new Rect(pt1,pt2);
 				Mat image_crop = new Mat(image,rectCrop);
 				Mat bw = new Mat();
-			    Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
+				Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
 
 				Imgcodecs.imwrite(userDirectory + "/Test/" + name + ".jpg", bw);
 
@@ -203,49 +193,7 @@ public class Camera extends JFrame {
 				clicked_bdd = false;
 			}
 		}
-	}
 
-	// Main driver method
-	public static void main(String[] args) {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-
-		/*
-		 * Creation of the Apprentissage and Test Folders
-		 */
-		File apprentissage = new File(userDirectory + "/Apprentissage");
-		if(apprentissage.exists()) {
-			String[] entries = apprentissage.list();
-			for(String s: entries) {
-				File currentFile = new File(apprentissage.getPath(),s);
-				currentFile.delete();
-			}
-//			apprentissage.delete();
-		}
-		apprentissage.mkdir();
-
-		File test = new File(userDirectory + "/Test");
-		if(test.exists()) {
-			String[] entries = test.list();
-			for(String s: entries) {
-				File currentFile = new File(test.getPath(),s);
-				currentFile.delete();
-			}
-//			test.delete();
-		}
-		test.mkdir();
-
-		EventQueue.invokeLater(new Runnable() {
-			// Overriding existing run() method
-			public void run() {
-				final Camera camera = new Camera();
-
-				// Start camera in thread
-				new Thread(new Runnable() {
-					public void run() {
-						camera.startCamera();
-					}
-				}).start();
-			}
-		});
 	}
 }
+
