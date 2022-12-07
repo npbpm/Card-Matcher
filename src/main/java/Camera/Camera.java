@@ -214,14 +214,23 @@ public class Camera extends JFrame {
 		 */
 		File apprentissage = new File(userDirectory + "/Apprentissage");
 		if(apprentissage.exists()) {
-			System.out.println("Le dossier existe");
-			apprentissage.delete();
+			String[] entries = apprentissage.list();
+			for(String s: entries) {
+				File currentFile = new File(apprentissage.getPath(),s);
+				currentFile.delete();
+			}
+//			apprentissage.delete();
 		}
 		apprentissage.mkdir();
 
 		File test = new File(userDirectory + "/Test");
 		if(test.exists()) {
-			test.delete();
+			String[] entries = test.list();
+			for(String s: entries) {
+				File currentFile = new File(test.getPath(),s);
+				currentFile.delete();
+			}
+//			test.delete();
 		}
 		test.mkdir();
 
