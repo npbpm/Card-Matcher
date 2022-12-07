@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,6 +23,7 @@ import javax.swing.JOptionPane;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -30,8 +32,9 @@ import org.opencv.imgproc.Imgproc;
 // This class is responsible for taking screenshot
 import org.opencv.videoio.VideoCapture;
 
-import Buttons.CaptureButton;
-import Buttons.FolderButton;
+import Buttons.TestButton;
+import Buttons.dbButton;
+import Buttons.SaveButton;
 
 // Class - Swing Class
 public class Camera extends JFrame {
@@ -39,8 +42,9 @@ public class Camera extends JFrame {
 	// Camera screen
 	private JLabel cameraScreen;
 
-	// Button for image capture
+	// Buttons
 	private JButton btnCapture;
+	private JButton btnDB;
 
 	// Start camera
 	private VideoCapture capture;
@@ -52,17 +56,35 @@ public class Camera extends JFrame {
 	private JButton btnFolderChoice;
 	private String folderPath;
 
-	private boolean clicked = false;
+	// True si l'utilisateur a cliqué sur le mode test
+	public boolean clicked_test = false;
+	public boolean clicked_save = false;
+	public boolean clicked_bdd = false;
+
+	// Path
+	private static String userDirectory ;
+	private String path ;
 
 
-	public void changeClicked() {
-		clicked= !clicked;
+	public void changeClickedTest() {
+		clicked_test= !clicked_test;
+		System.out.println(clicked_test);
+	}
+	
+	public void changeClickedSave() {
+		clicked_save= !clicked_save;
+		System.out.println(clicked_save);
+	}
+	public void changeClickedBDD() {
+		clicked_bdd= !clicked_bdd;
+		System.out.println(clicked_bdd);
 	}
 	public void changeFolderPath(String sentence) {
 		folderPath = JOptionPane.showInputDialog(sentence);
 	}
-	public Camera() {
-
+	public Camera(String Directory) {
+		userDirectory = System.getProperty("user.dir");
+		path = userDirectory + "/Apprentissage/";
 		// Designing UI
 		setLayout(null);
 
@@ -72,10 +94,11 @@ public class Camera extends JFrame {
 		add(cameraScreen);
 
 		// capture button
-		btnCapture = new CaptureButton(this);
-
+		btnCapture = new TestButton(this);
 		// folder button
-		btnFolderChoice = new FolderButton (this);
+		btnFolderChoice = new SaveButton (this);
+		// folder button
+		btnDB = new dbButton (this);
 
 		setSize(new Dimension(640, 560));
 		setLocationRelativeTo(null);
@@ -96,13 +119,13 @@ public class Camera extends JFrame {
 			// read image to matrix
 			capture.read(image);
 
-			// create red rectangle 
+			// create rectangle 
 			Mat src= image;   //where the rectangle has to appear
 			Size s=src.size();
 			Point pt1 = new Point(s.width-250,s.height-350);    // top-left corner of the rectangle
 			Point pt2 = new Point(s.width-100,s.height-100);            // bottom-right corner of the rectangle
 			Scalar color = new Scalar(0,0,0);                 // choice of color (RGB)
-			int th = 5;                                         // choice of thickness
+			int th = 2;                                         // choice of thickness
 			Imgproc.rectangle(src, pt1, pt2,color,th);          // creation
 
 			// convert matrix to byte
@@ -114,24 +137,63 @@ public class Camera extends JFrame {
 			// Add to JLabel
 			icon = new ImageIcon(imageData);
 			cameraScreen.setIcon(icon);
-
 			// Capture and save to file
-			if (clicked) {
+			if (clicked_test) {
+				System.out.println("Entering");
 				// prompt for enter image name
 				String name = JOptionPane.showInputDialog(this, "Enter image name");
 				if (name == null) {
 					name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
 				}
 
-				// Write to file
-				if (folderPath==null) {
-					Imgcodecs.imwrite("images/" + name + ".jpg", image);
-				}
-				else {
-					Imgcodecs.imwrite(folderPath + name + ".jpg", image);
-				}
+				// Write to file + crop
+
+				Rect rectCrop = new Rect(pt1,pt2);
+				Mat image_crop = new Mat(image,rectCrop);
+				Mat bw = new Mat();
+				Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
+
+				Imgcodecs.imwrite(userDirectory + "/Test/" + name + ".jpg", bw);
+
+				clicked_test = false;
 			}
-			clicked = false;
+
+			// A sauvegarder dans des dossiers séparés après
+
+			if (clicked_save) {
+				// prompt for enter image name
+				String name = JOptionPane.showInputDialog(this, "Enter image name");
+				if (name == null) {
+					name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
+				}
+
+				// Write to file + crop
+
+				Rect rectCrop = new Rect(pt1,pt2);
+				Mat image_crop = new Mat(image,rectCrop);
+
+				Imgcodecs.imwrite(path + name + ".jpg", image_crop);
+
+				clicked_save = false;
+			}
+
+			if (clicked_bdd) {
+
+				JFileChooser dialogue = new JFileChooser();
+
+				dialogue.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+				dialogue.showOpenDialog(null);
+
+				if (dialogue.getSelectedFile() != null) {
+					System.out.println("Dossier choisi : " + dialogue.getSelectedFile());
+
+					path = dialogue.getSelectedFile().toString() + "/";
+				}
+				clicked_bdd = false;
+			}
 		}
+
 	}
 }
+

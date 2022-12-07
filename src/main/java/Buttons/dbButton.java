@@ -4,20 +4,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-
 import Camera.Camera;
-
-public class FolderButton extends JButton {
+public class dbButton extends JButton{
 	private Camera camera;
-	public FolderButton (Camera c) {
+	public dbButton (Camera c) {
 		super();
-		this.camera=c;
-		this.setBounds(400, 480, 80, 40);
-		this.setText("Folder");
+		this.camera= c;
+		this.setBounds(0, 480, 170, 40);
+		this.setText("Select Database");
 		camera.add(this);
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				camera.changeFolderPath("Select the path to the folder you want to use:");
+				camera.changeClickedBDD();
 			}
 		});
 	}
