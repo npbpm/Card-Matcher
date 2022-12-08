@@ -22,10 +22,12 @@ import javax.swing.JOptionPane;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 // Importing VideoCapture class
@@ -34,6 +36,7 @@ import org.opencv.videoio.VideoCapture;
 
 import Buttons.TestButton;
 import Buttons.dbButton;
+import Sift.Sift;
 import Buttons.SaveButton;
 
 // Class - Swing Class
@@ -152,8 +155,17 @@ public class Camera extends JFrame {
 				Mat image_crop = new Mat(image,rectCrop);
 				Mat bw = new Mat();
 				Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
+				
+				// test sift capture test + image bdd
+				Sift sif = new Sift();
+				
+				// test poker
+				Imgcodecs imageCodecs = new Imgcodecs();
+				Mat m = imageCodecs.imread("./PokerDeck/AC.jpg");
+				
+				Mat out=sif.compareCards(bw,m);
 
-				Imgcodecs.imwrite(userDirectory + "/Test/" + name + ".jpg", bw);
+				Imgcodecs.imwrite(userDirectory + "/Test/" + name + ".jpg", out);
 
 				clicked_test = false;
 			}
@@ -175,6 +187,7 @@ public class Camera extends JFrame {
 				Imgcodecs.imwrite(path + name + ".jpg", image_crop);
 
 				clicked_save = false;
+				
 			}
 
 			if (clicked_bdd) {
