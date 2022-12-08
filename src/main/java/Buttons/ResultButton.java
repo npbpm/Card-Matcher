@@ -7,17 +7,18 @@ import javax.swing.JButton;
 
 import Camera.Camera;
 
-public class SaveButton extends JButton {
+public class ResultButton extends JButton {
 	private Camera camera;
-	public SaveButton (Camera c) {
+
+	public ResultButton(Camera c) {
 		super();
-		this.camera=c;
-		this.setBounds(310, 480, 80, 40);
-		this.setText("Save");
+		this.camera = c;
+		this.setBounds(540, 480, 80, 40);
+		this.setText("Result");
 		camera.add(this);
 		this.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				camera.changeClickedSave();
+				camera.changeClickedResult();
 			}
 		});
 	}

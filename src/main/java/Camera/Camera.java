@@ -38,11 +38,19 @@ import org.opencv.videoio.VideoCapture;
 
 import Buttons.TestButton;
 import Buttons.dbButton;
+import Image.Descriptor;
+import Buttons.ResultButton;
 import Sift.Sift;
 import Buttons.SaveButton;
 
 // Class - Swing Class
 public class Camera extends JFrame {
+
+	private Result result;
+
+	private MatOfKeyPoint kpts1;
+
+	private Descriptor desc;
 
 	// Camera screen
 	private JLabel cameraScreen;
@@ -50,6 +58,8 @@ public class Camera extends JFrame {
 	// Buttons
 	private JButton btnCapture;
 	private JButton btnDB;
+	private JButton btnFolderChoice;
+	private JButton btnResult;
 
 	// Start camera
 	private VideoCapture capture;
@@ -58,13 +68,13 @@ public class Camera extends JFrame {
 	private Mat image;
 
 	// Select the folder to use
-	private JButton btnFolderChoice;
 	private String folderPath;
 
 	// True si l'utilisateur a cliqué sur le mode test
 	public boolean clicked_test = false;
 	public boolean clicked_save = false;
 	public boolean clicked_bdd = false;
+	public boolean clicked_result = false;
 
 	// Path
 	private static String userDirectory;
@@ -83,6 +93,11 @@ public class Camera extends JFrame {
 	public void changeClickedBDD() {
 		clicked_bdd = !clicked_bdd;
 		System.out.println(clicked_bdd);
+	}
+
+	public void changeClickedResult() {
+		clicked_result = !clicked_result;
+		System.out.println(clicked_result);
 	}
 
 	public void changeFolderPath(String sentence) {
@@ -107,6 +122,9 @@ public class Camera extends JFrame {
 		// folder button
 		btnDB = new dbButton(this);
 
+		// result button
+		btnResult = new ResultButton(this);
+
 		setSize(new Dimension(640, 560));
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -117,6 +135,8 @@ public class Camera extends JFrame {
 	// Creating a camera
 	@SuppressWarnings("deprecation")
 	public void startCamera() {
+		desc = new Descriptor(kpts1);
+		
 		capture = new VideoCapture(0);
 		image = new Mat();
 		byte[] imageData;
@@ -169,15 +189,10 @@ public class Camera extends JFrame {
 				// test poker
 				Imgcodecs imageCodecs = new Imgcodecs();
 				Mat m = imageCodecs.imread("./PokerDeck/AC.jpg");
-<<<<<<< HEAD
 
 				// Boucle pour comparer la carte a toutes les cartes de la BDD
 				File pokerDeck = new File("./PokerDeck");
-=======
-				
-				//Boucle pour comparer la carte a toutes les cartes de la BDD
-				File pokerDeck = new File(path);
->>>>>>> 9f030088da2136169a645aa3b440963abdebab3f
+
 				String[] imagesPath = pokerDeck.list();
 				Integer counter = 0;
 				for (String imgPath : imagesPath) {
@@ -234,6 +249,10 @@ public class Camera extends JFrame {
 					path = dialogue.getSelectedFile().toString() + "/";
 				}
 				clicked_bdd = false;
+			}
+			if (clicked_result) {
+				result = new Result(desc);
+				clicked_result = false;
 			}
 		}
 
