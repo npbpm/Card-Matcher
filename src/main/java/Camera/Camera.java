@@ -38,7 +38,6 @@ import org.opencv.videoio.VideoCapture;
 
 import Buttons.TestButton;
 import Buttons.dbButton;
-import Image.Descriptor;
 import Buttons.ResultButton;
 import Sift.Sift;
 import Buttons.SaveButton;
@@ -49,8 +48,6 @@ public class Camera extends JFrame {
 	private Result result;
 
 	private MatOfKeyPoint kpts1;
-
-	private Descriptor desc;
 
 	// Camera screen
 	private JLabel cameraScreen;
@@ -135,7 +132,6 @@ public class Camera extends JFrame {
 	// Creating a camera
 	@SuppressWarnings("deprecation")
 	public void startCamera() {
-		desc = new Descriptor(kpts1);
 		
 		capture = new VideoCapture(0);
 		image = new Mat();
@@ -208,12 +204,13 @@ public class Camera extends JFrame {
 																												// comparaison
 																												// dans
 																												// le
-																												// dossier
-																												// test
+																												// dossier																					// test
 				}
+				
 
 				clicked_test = false;
 			}
+			//result = new Result(image);
 
 			// A sauvegarder dans des dossiers séparés après
 
@@ -250,10 +247,10 @@ public class Camera extends JFrame {
 				}
 				clicked_bdd = false;
 			}
-			if (clicked_result) {
-				result = new Result(desc);
-				clicked_result = false;
-			}
+			//if (clicked_result) {
+			//	result.show();
+			//	clicked_result = false;
+			//}
 		}
 
 	}
