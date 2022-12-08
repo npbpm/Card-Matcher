@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfKeyPoint;
@@ -66,26 +67,28 @@ public class Camera extends JFrame {
 	public boolean clicked_bdd = false;
 
 	// Path
-	private static String userDirectory ;
-	private String path ;
-
+	private static String userDirectory;
+	private String path;
 
 	public void changeClickedTest() {
-		clicked_test= !clicked_test;
+		clicked_test = !clicked_test;
 		System.out.println(clicked_test);
 	}
-	
+
 	public void changeClickedSave() {
-		clicked_save= !clicked_save;
+		clicked_save = !clicked_save;
 		System.out.println(clicked_save);
 	}
+
 	public void changeClickedBDD() {
-		clicked_bdd= !clicked_bdd;
+		clicked_bdd = !clicked_bdd;
 		System.out.println(clicked_bdd);
 	}
+
 	public void changeFolderPath(String sentence) {
 		folderPath = JOptionPane.showInputDialog(sentence);
 	}
+
 	public Camera(String Directory) {
 		userDirectory = System.getProperty("user.dir");
 		path = userDirectory + "/Apprentissage/";
@@ -100,9 +103,9 @@ public class Camera extends JFrame {
 		// capture button
 		btnCapture = new TestButton(this);
 		// folder button
-		btnFolderChoice = new SaveButton (this);
+		btnFolderChoice = new SaveButton(this);
 		// folder button
-		btnDB = new dbButton (this);
+		btnDB = new dbButton(this);
 
 		setSize(new Dimension(640, 560));
 		setLocationRelativeTo(null);
@@ -123,14 +126,17 @@ public class Camera extends JFrame {
 			// read image to matrix
 			capture.read(image);
 
-			// create rectangle 
-			Mat src= image;   //where the rectangle has to appear
-			Size s=src.size();
-			Point pt1 = new Point(s.width-250,s.height-350);    // top-left corner of the rectangle
-			Point pt2 = new Point(s.width-100,s.height-100);            // bottom-right corner of the rectangle
-			Scalar color = new Scalar(0,0,0);                 // choice of color (RGB)
-			int th = 2;                                         // choice of thickness
-			Imgproc.rectangle(src, pt1, pt2,color,th);          // creation
+			// create rectangle
+			Mat src = image; // where the rectangle has to appear
+			Mat flip = new Mat();
+			Core.flip(image, flip, 1);
+			image = flip;
+			Size s = src.size();
+			Point pt1 = new Point(s.width - 250, s.height - 350); // top-left corner of the rectangle
+			Point pt2 = new Point(s.width - 100, s.height - 100); // bottom-right corner of the rectangle
+			Scalar color = new Scalar(0, 0, 0); // choice of color (RGB)
+			int th = 2; // choice of thickness
+			Imgproc.rectangle(src, pt1, pt2, color, th); // creation
 
 			// convert matrix to byte
 			final MatOfByte buf = new MatOfByte();
@@ -152,29 +158,37 @@ public class Camera extends JFrame {
 
 				// Write to file + crop
 
-				Rect rectCrop = new Rect(pt1,pt2);
-				Mat image_crop = new Mat(image,rectCrop);
+				Rect rectCrop = new Rect(pt1, pt2);
+				Mat image_crop = new Mat(image, rectCrop);
 				Mat bw = new Mat();
 				Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
-				
+
 				// test sift capture test + image bdd
 				Sift sif = new Sift();
-				
+
 				// test poker
 				Imgcodecs imageCodecs = new Imgcodecs();
 				Mat m = imageCodecs.imread("./PokerDeck/AC.jpg");
-				
-				//Boucle pour comparer la carte a toutes les cartes de la BDD
+
+				// Boucle pour comparer la carte a toutes les cartes de la BDD
 				File pokerDeck = new File("./PokerDeck");
 				String[] imagesPath = pokerDeck.list();
 				Integer counter = 0;
-				for(String imgPath: imagesPath) {
+				for (String imgPath : imagesPath) {
 					counter++;
-					File currentImg = new File(pokerDeck.getPath(),imgPath);
+					File currentImg = new File(pokerDeck.getPath(), imgPath);
 					Mat img = imageCodecs.imread(currentImg.getPath());
-					
+
 					Mat outImg = sif.compareCards(bw, img);
-					Imgcodecs.imwrite(userDirectory + "/Test/imTest" + counter.toString() + ".jpg", outImg);	//On store l'image montrant la comparaison dans le dossier test
+					Imgcodecs.imwrite(userDirectory + "/Test/imTest" + counter.toString() + ".jpg", outImg); // On store
+																												// l'image
+																												// montrant
+																												// la
+																												// comparaison
+																												// dans
+																												// le
+																												// dossier
+																												// test
 				}
 
 				clicked_test = false;
@@ -191,13 +205,13 @@ public class Camera extends JFrame {
 
 				// Write to file + crop
 
-				Rect rectCrop = new Rect(pt1,pt2);
-				Mat image_crop = new Mat(image,rectCrop);
+				Rect rectCrop = new Rect(pt1, pt2);
+				Mat image_crop = new Mat(image, rectCrop);
 
 				Imgcodecs.imwrite(path + name + ".jpg", image_crop);
 
 				clicked_save = false;
-				
+
 			}
 
 			if (clicked_bdd) {
@@ -219,4 +233,3 @@ public class Camera extends JFrame {
 
 	}
 }
-
