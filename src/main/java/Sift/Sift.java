@@ -30,6 +30,7 @@ public class Sift {
 	}
 	
 	public Mat compareCards(Mat i1, Mat i2) {
+		//i2 c'est l'image a comparer
 		SIFT s = SIFT.create(20);
 		
 		Mat bw = new Mat();

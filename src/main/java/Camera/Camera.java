@@ -9,6 +9,7 @@ package Camera;
 
 // importing swing and awt classes
 import java.awt.Dimension;
+import java.io.File;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -163,9 +164,18 @@ public class Camera extends JFrame {
 				Imgcodecs imageCodecs = new Imgcodecs();
 				Mat m = imageCodecs.imread("./PokerDeck/AC.jpg");
 				
-				Mat out=sif.compareCards(bw,m);
-
-				Imgcodecs.imwrite(userDirectory + "/Test/" + name + ".jpg", out);
+				//Boucle pour comparer la carte a toutes les cartes de la BDD
+				File pokerDeck = new File("./PokerDeck");
+				String[] imagesPath = pokerDeck.list();
+				Integer counter = 0;
+				for(String imgPath: imagesPath) {
+					counter++;
+					File currentImg = new File(pokerDeck.getPath(),imgPath);
+					Mat img = imageCodecs.imread(currentImg.getPath());
+					
+					Mat outImg = sif.compareCards(bw, img);
+					Imgcodecs.imwrite(userDirectory + "/Test/imTest" + counter.toString() + ".jpg", outImg);	//On store l'image montrant la comparaison dans le dossier test
+				}
 
 				clicked_test = false;
 			}
