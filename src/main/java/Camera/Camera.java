@@ -7,19 +7,25 @@
 // Importing openCV modules
 package Camera;
 
+import java.awt.Color;
 // importing swing and awt classes
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.io.File;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -29,7 +35,6 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.highgui.HighGui;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 // Importing VideoCapture class
@@ -46,13 +51,19 @@ import Buttons.SaveButton;
 public class Camera extends JFrame {
 
 	private Result result;
-	
+
 	private String imName;
+
+	private String mode = "Apprentissage";
 
 	private MatOfKeyPoint kpts1;
 
 	// Camera screen
 	private JLabel cameraScreen;
+	private JPanel overallPanel = new JPanel();
+	private JPanel cameraPanel = new JPanel();
+	private JPanel resultPanel = new JPanel();
+	private JPanel buttonsPanel = new JPanel();
 
 	// Buttons
 	private JButton btnCapture;
@@ -98,37 +109,89 @@ public class Camera extends JFrame {
 	public void changeFolderPath(String sentence) {
 		folderPath = JOptionPane.showInputDialog(sentence);
 	}
-	
+
 	public void setImName(String name) {
 		imName = name;
 	}
-	
+
 	public String getImName() {
 		return imName;
+	}
+
+	public void setMode() {
+		if (getMode().equals("Apprentissage")) {
+			mode = "Test";
+		} else {
+			mode = "Apprentissage";
+		}
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public boolean isDirectoryEmpty(File directory) {
+		String[] files = directory.list();
+		return files.length == 0;
 	}
 
 	public Camera(String Directory) {
 		userDirectory = System.getProperty("user.dir");
 		path = userDirectory + "/Apprentissage/";
+
+		// Colors
+		Color learningModeColor = Color.GREEN;
+		Color testModeColor = Color.RED;
+		Color backgroundColor = Color.decode("#425C81");
+
 		// Designing UI
-		setLayout(null);
+		setPreferredSize(new Dimension(1920, 1080));
+		setSize(new Dimension(1920, 1080));
+		setLayout(new GridLayout(1, 1, 0, 0));
+
+		overallPanel.setLayout(new GridLayout(1, 3, 0, 0));
+		overallPanel.setBackground(backgroundColor);
+
+		// Buttons panel UI
+		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+		buttonsPanel.setBackground(backgroundColor);
+		buttonsPanel.add(Box.createVerticalGlue());
+
+		// capture button
+		btnCapture = new TestButton(this, buttonsPanel);
+		btnCapture.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		btnCapture.setBackground(testModeColor);
+		buttonsPanel.add(Box.createVerticalGlue());
+		// folder button
+		btnFolderChoice = new SaveButton(this, buttonsPanel);
+		btnFolderChoice.setBackground(learningModeColor);
+		btnFolderChoice.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		buttonsPanel.add(Box.createVerticalGlue());
+		// folder button
+		btnDB = new dbButton(this, buttonsPanel);
+		btnDB.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		buttonsPanel.add(Box.createVerticalGlue());
+		// result button
+		resultPanel.add(Box.createVerticalGlue());
+		btnResult = new ResultButton(this, resultPanel);
+		btnResult.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		resultPanel.add(Box.createVerticalGlue());
+		
+		// Results panel UI
+		resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
+		resultPanel.setBackground(backgroundColor);
+		
+		overallPanel.add(buttonsPanel);
 
 		// screen
 		cameraScreen = new JLabel();
 		cameraScreen.setBounds(0, 0, 640, 480);
-		add(cameraScreen);
+		overallPanel.add(cameraScreen);
 
-		// capture button
-		btnCapture = new TestButton(this);
-		// folder button
-		btnFolderChoice = new SaveButton(this);
-		// folder button
-		btnDB = new dbButton(this);
+		// Result pane
+		overallPanel.add(resultPanel);
+		getContentPane().add(overallPanel);
 
-		// result button
-		btnResult = new ResultButton(this);
-
-		setSize(new Dimension(640, 560));
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
@@ -138,7 +201,7 @@ public class Camera extends JFrame {
 	// Creating a camera
 	@SuppressWarnings("deprecation")
 	public void startCamera() {
-		
+
 		capture = new VideoCapture(0);
 		image = new Mat();
 		byte[] imageData;
@@ -156,7 +219,12 @@ public class Camera extends JFrame {
 			Size s = src.size();
 			Point pt1 = new Point(s.width - 250, s.height - 350); // top-left corner of the rectangle
 			Point pt2 = new Point(s.width - 100, s.height - 100); // bottom-right corner of the rectangle
-			Scalar color = new Scalar(0, 0, 0); // choice of color (RGB)
+			Scalar color;
+			if (getMode().equals("Apprentissage")) {
+				color = new Scalar(0, 255, 0); // choice of color (BGR)
+			} else {
+				color = new Scalar(0, 0, 255); // choice of color (BGR)
+			}
 			int th = 2; // choice of thickness
 			Imgproc.rectangle(image, pt1, pt2, color, th); // creation
 
@@ -171,56 +239,65 @@ public class Camera extends JFrame {
 			cameraScreen.setIcon(icon);
 			// Capture and save to file
 			if (clicked_test) {
-
-				// Write to file + crop
-
-				Rect rectCrop = new Rect(pt1, pt2);
-				Mat image_crop = new Mat(image, rectCrop);
-				Mat bw = new Mat();
-				Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
-				Imgcodecs.imwrite(userDirectory + "/Test/" + getImName() + "_Test.jpg", image_crop);
-
-				// test sift capture test + image bdd
-				Sift sif = new Sift();
-
-				// test poker
-				Imgcodecs imageCodecs = new Imgcodecs();
-//				Mat m = imageCodecs.imread("./PokerDeck/AC.jpg");
-
-				// Boucle pour comparer la carte a toutes les cartes de la BDD
-				File pokerDeck = new File(path);
-
-				String[] imagesPath = pokerDeck.list();
-				for (String imgPath : imagesPath) {
-					File currentImg = new File(pokerDeck.getPath(), imgPath);
-					Mat img = imageCodecs.imread(currentImg.getPath());
-
-					Mat outImg = sif.compareCards(bw, img);
-					// On store l'image montrant la comparaison dans le dossier test
-					Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result.jpg", outImg); 
+				if (getMode().equals("Apprentissage")) {
+					setMode();
 				}
-				
+				File BDD = new File(path);
+				if (isDirectoryEmpty(BDD)) { // We see if the Apprentissage folder is not empty before doing a test
+					System.out.println("The folder is empty");
+				} else {
+					// Write to file + crop
+
+					Rect rectCrop = new Rect(pt1, pt2);
+					Mat image_crop = new Mat(image, rectCrop);
+					Mat bw = new Mat();
+					Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
+					Imgcodecs.imwrite(userDirectory + "/Test/" + getImName() + "_Test.jpg", image_crop);
+
+					// test sift capture test + image bdd
+					Sift sif = new Sift();
+
+					// test poker
+					Imgcodecs imageCodecs = new Imgcodecs();
+
+					// Boucle pour comparer la carte a toutes les cartes de la BDD
+
+					String[] imagesPath = BDD.list();
+					for (String imgPath : imagesPath) {
+						File currentImg = new File(BDD.getPath(), imgPath);
+						Mat img = imageCodecs.imread(currentImg.getPath());
+
+						Mat outImg = sif.compareCards(bw, img);
+						// On store l'image montrant la comparaison dans le dossier test
+						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result.jpg", outImg);
+					}
+				}
 
 				clicked_test = false;
 			}
-			//result = new Result(image);
+			// result = new Result(image);
 
 			// A sauvegarder dans des dossiers séparés après
 
 			if (clicked_save) {
+				if (getMode().equals("Test")) {
+					setMode();
+				}
 				// prompt for enter image name
 				String name = JOptionPane.showInputDialog(this, "Enter image name");
 				setImName(name);
-				if (name.equals("")) {
-					name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
+				if (!(name == null)) {
+					if (name.equals("")) {
+						name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
+					}
+
+					// Write to file + crop
+
+					Rect rectCrop = new Rect(pt1, pt2);
+					Mat image_crop = new Mat(image, rectCrop);
+
+					Imgcodecs.imwrite(path + name + ".jpg", image_crop);
 				}
-
-				// Write to file + crop
-
-				Rect rectCrop = new Rect(pt1, pt2);
-				Mat image_crop = new Mat(image, rectCrop);
-
-				Imgcodecs.imwrite(path + name + ".jpg", image_crop);
 
 				clicked_save = false;
 
@@ -241,10 +318,10 @@ public class Camera extends JFrame {
 				}
 				clicked_bdd = false;
 			}
-			//if (clicked_result) {
-			//	result.show();
-			//	clicked_result = false;
-			//}
+			// if (clicked_result) {
+			// result.show();
+			// clicked_result = false;
+			// }
 		}
 
 	}
