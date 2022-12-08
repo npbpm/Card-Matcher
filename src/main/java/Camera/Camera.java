@@ -67,7 +67,7 @@ public class Camera extends JFrame {
 
 	// Path
 	private static String userDirectory ;
-	private String path ;
+	private String path = null ;
 
 
 	public void changeClickedTest() {
@@ -165,7 +165,7 @@ public class Camera extends JFrame {
 				Mat m = imageCodecs.imread("./PokerDeck/AC.jpg");
 				
 				//Boucle pour comparer la carte a toutes les cartes de la BDD
-				File pokerDeck = new File("./PokerDeck");
+				File pokerDeck = new File(path);
 				String[] imagesPath = pokerDeck.list();
 				Integer counter = 0;
 				for(String imgPath: imagesPath) {
