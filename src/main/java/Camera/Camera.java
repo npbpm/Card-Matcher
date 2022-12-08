@@ -169,9 +169,15 @@ public class Camera extends JFrame {
 				// test poker
 				Imgcodecs imageCodecs = new Imgcodecs();
 				Mat m = imageCodecs.imread("./PokerDeck/AC.jpg");
+<<<<<<< HEAD
 
 				// Boucle pour comparer la carte a toutes les cartes de la BDD
 				File pokerDeck = new File("./PokerDeck");
+=======
+				
+				//Boucle pour comparer la carte a toutes les cartes de la BDD
+				File pokerDeck = new File(path);
+>>>>>>> 9f030088da2136169a645aa3b440963abdebab3f
 				String[] imagesPath = pokerDeck.list();
 				Integer counter = 0;
 				for (String imgPath : imagesPath) {
