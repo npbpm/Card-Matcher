@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -34,10 +35,18 @@ import org.opencv.videoio.VideoCapture;
 
 import Buttons.TestButton;
 import Buttons.dbButton;
+import Image.Descriptor;
+import Buttons.ResultButton;
 import Buttons.SaveButton;
 
 // Class - Swing Class
 public class Camera extends JFrame {
+
+	private Result result;
+
+	private MatOfKeyPoint kpts1;
+
+	private Descriptor desc;
 
 	// Camera screen
 	private JLabel cameraScreen;
@@ -45,6 +54,8 @@ public class Camera extends JFrame {
 	// Buttons
 	private JButton btnCapture;
 	private JButton btnDB;
+	private JButton btnFolderChoice;
+	private JButton btnResult;
 
 	// Start camera
 	private VideoCapture capture;
@@ -53,35 +64,42 @@ public class Camera extends JFrame {
 	private Mat image;
 
 	// Select the folder to use
-	private JButton btnFolderChoice;
 	private String folderPath;
 
 	// True si l'utilisateur a cliqué sur le mode test
 	public boolean clicked_test = false;
 	public boolean clicked_save = false;
 	public boolean clicked_bdd = false;
+	public boolean clicked_result = false;
 
 	// Path
-	private static String userDirectory ;
-	private String path ;
-
+	private static String userDirectory;
+	private String path;
 
 	public void changeClickedTest() {
-		clicked_test= !clicked_test;
+		clicked_test = !clicked_test;
 		System.out.println(clicked_test);
 	}
-	
+
 	public void changeClickedSave() {
-		clicked_save= !clicked_save;
+		clicked_save = !clicked_save;
 		System.out.println(clicked_save);
 	}
+
 	public void changeClickedBDD() {
-		clicked_bdd= !clicked_bdd;
+		clicked_bdd = !clicked_bdd;
 		System.out.println(clicked_bdd);
 	}
+
+	public void changeClickedResult() {
+		clicked_result = !clicked_result;
+		System.out.println(clicked_result);
+	}
+
 	public void changeFolderPath(String sentence) {
 		folderPath = JOptionPane.showInputDialog(sentence);
 	}
+
 	public Camera(String Directory) {
 		userDirectory = System.getProperty("user.dir");
 		path = userDirectory + "/Apprentissage/";
@@ -96,9 +114,11 @@ public class Camera extends JFrame {
 		// capture button
 		btnCapture = new TestButton(this);
 		// folder button
-		btnFolderChoice = new SaveButton (this);
+		btnFolderChoice = new SaveButton(this);
 		// folder button
-		btnDB = new dbButton (this);
+		btnDB = new dbButton(this);
+		// result button
+		btnResult = new ResultButton(this);
 
 		setSize(new Dimension(640, 560));
 		setLocationRelativeTo(null);
@@ -110,6 +130,8 @@ public class Camera extends JFrame {
 	// Creating a camera
 	@SuppressWarnings("deprecation")
 	public void startCamera() {
+		desc = new Descriptor(kpts1);
+		
 		capture = new VideoCapture(0);
 		image = new Mat();
 		byte[] imageData;
@@ -192,8 +214,11 @@ public class Camera extends JFrame {
 				}
 				clicked_bdd = false;
 			}
+			if (clicked_result) {
+				result = new Result(desc);
+				clicked_result = false;
+			}
 		}
 
 	}
 }
-
