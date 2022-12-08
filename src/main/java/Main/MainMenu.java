@@ -17,16 +17,9 @@ public class MainMenu {
 		 * Creation of the Apprentissage and Test Folders
 		 * */
 		File apprentissage = new File(userDirectory + "/Apprentissage");
-		if(apprentissage.exists()) {
-			String[] entries = apprentissage.list();
-			for(String s: entries) {
-				File currentFile = new File(apprentissage.getPath(),s);
-				currentFile.delete();
-			}
-			//			apprentissage.delete();
+		if(!apprentissage.exists()) {
+			apprentissage.mkdir();
 		}
-		apprentissage.mkdir();
-
 
 
 		File test = new File(userDirectory + "/Test");
@@ -39,6 +32,17 @@ public class MainMenu {
 			//			test.delete();
 		}
 		test.mkdir();
+		
+		
+		File testResult = new File(userDirectory + "/TestResults");
+		if(testResult.exists()) {
+			String[] entries = testResult.list();
+			for(String s: entries) {
+				File currentFile = new File(testResult.getPath(),s);
+				currentFile.delete();
+			}
+		}
+		testResult.mkdir();
 
 
 		EventQueue.invokeLater(new Runnable() {

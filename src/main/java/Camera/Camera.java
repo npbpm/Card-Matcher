@@ -46,6 +46,8 @@ import Buttons.SaveButton;
 public class Camera extends JFrame {
 
 	private Result result;
+	
+	private String imName;
 
 	private MatOfKeyPoint kpts1;
 
@@ -79,26 +81,30 @@ public class Camera extends JFrame {
 
 	public void changeClickedTest() {
 		clicked_test = !clicked_test;
-		System.out.println(clicked_test);
 	}
 
 	public void changeClickedSave() {
 		clicked_save = !clicked_save;
-		System.out.println(clicked_save);
 	}
 
 	public void changeClickedBDD() {
 		clicked_bdd = !clicked_bdd;
-		System.out.println(clicked_bdd);
 	}
 
 	public void changeClickedResult() {
 		clicked_result = !clicked_result;
-		System.out.println(clicked_result);
 	}
 
 	public void changeFolderPath(String sentence) {
 		folderPath = JOptionPane.showInputDialog(sentence);
+	}
+	
+	public void setImName(String name) {
+		imName = name;
+	}
+	
+	public String getImName() {
+		return imName;
 	}
 
 	public Camera(String Directory) {
@@ -152,7 +158,7 @@ public class Camera extends JFrame {
 			Point pt2 = new Point(s.width - 100, s.height - 100); // bottom-right corner of the rectangle
 			Scalar color = new Scalar(0, 0, 0); // choice of color (RGB)
 			int th = 2; // choice of thickness
-			Imgproc.rectangle(src, pt1, pt2, color, th); // creation
+			Imgproc.rectangle(image, pt1, pt2, color, th); // creation
 
 			// convert matrix to byte
 			final MatOfByte buf = new MatOfByte();
@@ -165,12 +171,6 @@ public class Camera extends JFrame {
 			cameraScreen.setIcon(icon);
 			// Capture and save to file
 			if (clicked_test) {
-				System.out.println("Entering");
-				// prompt for enter image name
-				String name = JOptionPane.showInputDialog(this, "Enter image name");
-				if (name == null) {
-					name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
-				}
 
 				// Write to file + crop
 
@@ -178,33 +178,26 @@ public class Camera extends JFrame {
 				Mat image_crop = new Mat(image, rectCrop);
 				Mat bw = new Mat();
 				Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
+				Imgcodecs.imwrite(userDirectory + "/Test/" + getImName() + "_Test.jpg", image_crop);
 
 				// test sift capture test + image bdd
 				Sift sif = new Sift();
 
 				// test poker
 				Imgcodecs imageCodecs = new Imgcodecs();
-				Mat m = imageCodecs.imread("./PokerDeck/AC.jpg");
+//				Mat m = imageCodecs.imread("./PokerDeck/AC.jpg");
 
 				// Boucle pour comparer la carte a toutes les cartes de la BDD
-				File pokerDeck = new File("./PokerDeck");
+				File pokerDeck = new File(path);
 
 				String[] imagesPath = pokerDeck.list();
-				Integer counter = 0;
 				for (String imgPath : imagesPath) {
-					counter++;
 					File currentImg = new File(pokerDeck.getPath(), imgPath);
 					Mat img = imageCodecs.imread(currentImg.getPath());
 
 					Mat outImg = sif.compareCards(bw, img);
-					Imgcodecs.imwrite(userDirectory + "/Test/imTest" + counter.toString() + ".jpg", outImg); // On store
-																												// l'image
-																												// montrant
-																												// la
-																												// comparaison
-																												// dans
-																												// le
-																												// dossier																					// test
+					// On store l'image montrant la comparaison dans le dossier test
+					Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result.jpg", outImg); 
 				}
 				
 
@@ -217,7 +210,8 @@ public class Camera extends JFrame {
 			if (clicked_save) {
 				// prompt for enter image name
 				String name = JOptionPane.showInputDialog(this, "Enter image name");
-				if (name == null) {
+				setImName(name);
+				if (name.equals("")) {
 					name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
 				}
 
