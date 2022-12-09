@@ -10,12 +10,17 @@ package Camera;
 import java.awt.Color;
 // importing swing and awt classes
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.File;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -58,9 +63,25 @@ public class Camera extends JFrame {
 
 	private MatOfKeyPoint kpts1;
 
+	// Colors
+	Color learningModeColor = Color.GREEN;
+	Color testModeColor = Color.RED;
+	Color backgroundColor = Color.decode("#E0E0E0");
+	Color buttonsPanelBackgroundColor = Color.decode("#C1C9CC");
+	
+	//Background Image
+	Image bckImg = Toolkit.getDefaultToolkit().getImage(userDirectory + "/bckgrdImg.jpg");
+
+
 	// Camera screen
 	private JLabel cameraScreen;
-	private JPanel overallPanel = new JPanel();
+	private JPanel overallPanel = new JPanel(){
+		@Override
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			g.drawImage(bckImg, 0, 0, null);
+		}
+	};
 	private JPanel cameraPanel = new JPanel();
 	private JPanel resultPanel = new JPanel();
 	private JPanel buttonsPanel = new JPanel();
@@ -87,7 +108,7 @@ public class Camera extends JFrame {
 	public boolean clicked_result = false;
 
 	// Path
-	private static String userDirectory;
+	private static String userDirectory = System.getProperty("user.dir");
 	private String path;
 
 	public void changeClickedTest() {
@@ -136,62 +157,83 @@ public class Camera extends JFrame {
 	}
 
 	public Camera(String Directory) {
-		userDirectory = System.getProperty("user.dir");
 		path = userDirectory + "/Apprentissage/";
 
-		// Colors
-		Color learningModeColor = Color.GREEN;
-		Color testModeColor = Color.RED;
-		Color backgroundColor = Color.decode("#425C81");
+		// STYLING
 
 		// Designing UI
 		setPreferredSize(new Dimension(1920, 1080));
 		setSize(new Dimension(1920, 1080));
 		setLayout(new GridLayout(1, 1, 0, 0));
-
+		
 		overallPanel.setLayout(new GridLayout(1, 3, 0, 0));
-		overallPanel.setBackground(backgroundColor);
 
 		// Buttons panel UI
 		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
-		buttonsPanel.setBackground(backgroundColor);
+		buttonsPanel.setOpaque(false);
+		buttonsPanel.setPreferredSize(new Dimension(384,1080));
+		buttonsPanel.setSize(new Dimension(384,1080));
+		
+		
+		JLabel actionsLabel = new JLabel("Actions");
+		actionsLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		actionsLabel.setFont(new Font("Arial", Font.PLAIN, 70));
+		actionsLabel.setForeground(Color.WHITE);
+		buttonsPanel.add(actionsLabel);
+		
 		buttonsPanel.add(Box.createVerticalGlue());
 
 		// capture button
 		btnCapture = new TestButton(this, buttonsPanel);
 		btnCapture.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		btnCapture.setBackground(testModeColor);
+		btnCapture.setFont(new Font("Arial", Font.PLAIN, 40));
 		buttonsPanel.add(Box.createVerticalGlue());
 		// folder button
 		btnFolderChoice = new SaveButton(this, buttonsPanel);
 		btnFolderChoice.setBackground(learningModeColor);
 		btnFolderChoice.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		btnFolderChoice.setFont(new Font("Arial", Font.PLAIN, 40));
 		buttonsPanel.add(Box.createVerticalGlue());
 		// folder button
 		btnDB = new dbButton(this, buttonsPanel);
 		btnDB.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		btnDB.setFont(new Font("Arial", Font.PLAIN, 40));
 		buttonsPanel.add(Box.createVerticalGlue());
+		
+		//RESULTS
+		
+		JLabel resultsLabel = new JLabel("Results");
+		resultsLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		resultsLabel.setFont(new Font("Arial", Font.PLAIN, 70));
+		resultsLabel.setForeground(Color.WHITE);
+		resultPanel.add(resultsLabel);
+		
 		// result button
 		resultPanel.add(Box.createVerticalGlue());
 		btnResult = new ResultButton(this, resultPanel);
 		btnResult.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		btnResult.setFont(new Font("Arial", Font.PLAIN, 40));
 		resultPanel.add(Box.createVerticalGlue());
-		
+
 		// Results panel UI
 		resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
-		resultPanel.setBackground(backgroundColor);
-		
+		resultPanel.setPreferredSize(new Dimension(576,1080));
+		resultPanel.setOpaque(false);
+
 		overallPanel.add(buttonsPanel);
 
 		// screen
 		cameraScreen = new JLabel();
-		cameraScreen.setBounds(0, 0, 640, 480);
+		cameraScreen.setPreferredSize(new Dimension(960,480));
+		cameraScreen.setSize(new Dimension(960,480));
+//		cameraScreen.setBounds(0, 0, 640, 480);
 		overallPanel.add(cameraScreen);
 
 		// Result pane
 		overallPanel.add(resultPanel);
 		getContentPane().add(overallPanel);
-
+		
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
@@ -221,9 +263,9 @@ public class Camera extends JFrame {
 			Point pt2 = new Point(s.width - 100, s.height - 100); // bottom-right corner of the rectangle
 			Scalar color;
 			if (getMode().equals("Apprentissage")) {
-				color = new Scalar(0, 255, 0); // choice of color (BGR)
+				color = new Scalar(learningModeColor.getBlue(), learningModeColor.getGreen(), learningModeColor.getRed()); // choice of color (BGR)
 			} else {
-				color = new Scalar(0, 0, 255); // choice of color (BGR)
+				color = new Scalar(testModeColor.getBlue(), testModeColor.getGreen(), testModeColor.getRed()); // choice of color (BGR)
 			}
 			int th = 2; // choice of thickness
 			Imgproc.rectangle(image, pt1, pt2, color, th); // creation
@@ -265,15 +307,17 @@ public class Camera extends JFrame {
 					String[] imagesPath = BDD.list();
 					Integer compteur = 0;
 					for (String imgPath : imagesPath) {
-						//Ici le compteur nous sert uniquement à différencier chaque image, si on le mets pas, les images sont écrassés au fur et à mesure
-						//et donc on n'as que le dernier résultat.
+						// Ici le compteur nous sert uniquement à différencier chaque image, si on le
+						// mets pas, les images sont écrassés au fur et à mesure
+						// et donc on n'as que le dernier résultat.
 						compteur++;
 						File currentImg = new File(BDD.getPath(), imgPath);
 						Mat img = imageCodecs.imread(currentImg.getPath());
 
 						Mat outImg = sif.compareCards(bw, img);
 						// On store l'image montrant la comparaison dans le dossier test
-						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result" + compteur.toString() + ".jpg", outImg);
+						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result"
+								+ compteur.toString() + ".jpg", outImg);
 					}
 				}
 

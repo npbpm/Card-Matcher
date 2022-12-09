@@ -15,8 +15,8 @@ public class ResultButton extends JButton {
 	public ResultButton(Camera c, JPanel panel) {
 		super();
 		this.camera = c;
-		this.setSize(new Dimension(200,50));
-		this.setPreferredSize(new Dimension(200,50));
+		this.setSize(new Dimension(200,80));
+		this.setPreferredSize(new Dimension(200,80));
 		this.setText("Result");
 		panel.add(this);
 		this.addActionListener(new ActionListener() {
