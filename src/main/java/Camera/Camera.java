@@ -263,13 +263,17 @@ public class Camera extends JFrame {
 					// Boucle pour comparer la carte a toutes les cartes de la BDD
 
 					String[] imagesPath = BDD.list();
+					Integer compteur = 0;
 					for (String imgPath : imagesPath) {
+						//Ici le compteur nous sert uniquement à différencier chaque image, si on le mets pas, les images sont écrassés au fur et à mesure
+						//et donc on n'as que le dernier résultat.
+						compteur++;
 						File currentImg = new File(BDD.getPath(), imgPath);
 						Mat img = imageCodecs.imread(currentImg.getPath());
 
 						Mat outImg = sif.compareCards(bw, img);
 						// On store l'image montrant la comparaison dans le dossier test
-						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result.jpg", outImg);
+						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result" + compteur.toString() + ".jpg", outImg);
 					}
 				}
 
