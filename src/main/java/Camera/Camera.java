@@ -230,7 +230,7 @@ public class Camera extends JFrame {
 //		cameraScreen.setBounds(0, 0, 640, 480);
 		overallPanel.add(cameraScreen);
 
-		// Result pane
+		// Result panel
 		overallPanel.add(resultPanel);
 		getContentPane().add(overallPanel);
 		
