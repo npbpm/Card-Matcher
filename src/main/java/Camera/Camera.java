@@ -259,8 +259,8 @@ public class Camera extends JFrame {
 			Core.flip(image, flip, 1);
 			image = flip;
 			Size s = src.size();
-			Point pt1 = new Point(s.width - 250, s.height - 350); // top-left corner of the rectangle
-			Point pt2 = new Point(s.width - 100, s.height - 100); // bottom-right corner of the rectangle
+			Point pt1 = new Point(s.width - 350, s.height - 350); // top-left corner of the rectangle
+			Point pt2 = new Point(s.width - 200, s.height - 100); // bottom-right corner of the rectangle
 			Scalar color;
 			if (getMode().equals("Apprentissage")) {
 				color = new Scalar(learningModeColor.getBlue(), learningModeColor.getGreen(), learningModeColor.getRed()); // choice of color (BGR)
