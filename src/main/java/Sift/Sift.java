@@ -16,8 +16,7 @@ import org.opencv.imgproc.Imgproc;
 
 public class Sift {
 	
-	public Mat image1;
-	public Mat image2;
+	public double rate;
 	
 	public void showSift(Mat i) {
 		SIFT s = SIFT.create(20);
@@ -62,6 +61,11 @@ public class Sift {
 			}
 			
 		}
+		
+		// Matching rate of descriptors
+
+		rate=100*goodMatch.size()/l.size();
+		
 		
 		Matches.fromList(goodMatch);
 		
