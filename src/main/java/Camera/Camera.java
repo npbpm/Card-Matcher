@@ -308,6 +308,7 @@ public class Camera extends JFrame {
 					Integer compteur = 0;
 					double max_rate=0;
 					Mat im_proche=new Mat();
+					String bestMatch = "";
 					for (String imgPath : imagesPath) {
 						Sift sif = new Sift();
 						// Ici le compteur nous sert uniquement à différencier chaque image, si on le
@@ -324,9 +325,12 @@ public class Camera extends JFrame {
 						if (sif.rate>max_rate) {
 							max_rate=sif.rate;
 							im_proche=img;
+							bestMatch = userDirectory + "/TestResults/" + getImName() + "_Test_Result" + compteur.toString() + ".jpg";
 						};
 					}
 					result=new Result(im_proche);
+					System.out.println(bestMatch);
+					System.out.println(max_rate);
 				}
 
 				clicked_test = false;
