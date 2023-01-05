@@ -15,11 +15,14 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -297,7 +300,7 @@ public class Camera extends JFrame {
 					Imgcodecs.imwrite(userDirectory + "/Test/" + getImName() + "_Test.jpg", image_crop);
 
 					// test sift capture test + image bdd
-					Sift sif = new Sift();
+	
 
 					// test poker
 					Imgcodecs imageCodecs = new Imgcodecs();
@@ -306,9 +309,13 @@ public class Camera extends JFrame {
 
 					String[] imagesPath = BDD.list();
 					Integer compteur = 0;
+					double max_rate=0;
+					Mat im_proche=new Mat();
+					String bestMatch = "";
 					for (String imgPath : imagesPath) {
+						Sift sif = new Sift();
 						// Ici le compteur nous sert uniquement à différencier chaque image, si on le
-						// mets pas, les images sont écrassés au fur et à mesure
+						// mets pas, les images sont écrasées au fur et à mesure
 						// et donc on n'as que le dernier résultat.
 						compteur++;
 						File currentImg = new File(BDD.getPath(), imgPath);
@@ -318,7 +325,27 @@ public class Camera extends JFrame {
 						// On store l'image montrant la comparaison dans le dossier test
 						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result"
 								+ compteur.toString() + ".jpg", outImg);
+						if (sif.rate>max_rate) {
+							max_rate=sif.rate;
+							im_proche=img;
+							bestMatch = userDirectory + "/TestResults/" + getImName() + "_Test_Result" + compteur.toString() + ".jpg";
+						};
 					}
+					result=new Result(im_proche);
+					System.out.println(bestMatch);
+					System.out.println(max_rate);
+					File file = new File(bestMatch);
+					BufferedImage image = null;
+					try {
+						image = ImageIO.read(file);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					ImageIcon imageIcon = new ImageIcon(image);
+					JLabel label = new JLabel(imageIcon);
+					resultPanel.add(label);
+
 				}
 
 				clicked_test = false;
@@ -366,10 +393,10 @@ public class Camera extends JFrame {
 				}
 				clicked_bdd = false;
 			}
-			// if (clicked_result) {
-			// result.show();
-			// clicked_result = false;
-			// }
+			/*if (clicked_result) {
+				result.show();
+				clicked_result = false;
+			} */
 		}
 
 	}

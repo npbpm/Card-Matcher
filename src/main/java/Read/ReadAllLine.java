@@ -9,6 +9,7 @@ import com.opencsv.CSVWriter;
 /**
  * This class's purpose is to read all the lines. For now it doesn't do anything else, 
  * but later it could be used to return a serie of mathing rates.
+ * Warning: the first line that will be read will be the line "Name, POI"
  * The date should be written as a list of String. 
  * @author rabym
  *
