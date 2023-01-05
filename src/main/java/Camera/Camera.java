@@ -15,11 +15,14 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -331,6 +334,18 @@ public class Camera extends JFrame {
 					result=new Result(im_proche);
 					System.out.println(bestMatch);
 					System.out.println(max_rate);
+					File file = new File(bestMatch);
+					BufferedImage image = null;
+					try {
+						image = ImageIO.read(file);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					ImageIcon imageIcon = new ImageIcon(image);
+					JLabel label = new JLabel(imageIcon);
+					resultPanel.add(label);
+
 				}
 
 				clicked_test = false;
