@@ -16,8 +16,12 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -71,14 +75,13 @@ public class Camera extends JFrame {
 	Color testModeColor = Color.RED;
 	Color backgroundColor = Color.decode("#E0E0E0");
 	Color buttonsPanelBackgroundColor = Color.decode("#C1C9CC");
-	
-	//Background Image
-	Image bckImg = Toolkit.getDefaultToolkit().getImage(userDirectory + "/bckgrdImg.jpg");
 
+	// Background Image
+	Image bckImg = Toolkit.getDefaultToolkit().getImage(userDirectory + "/bckgrdImg.jpg");
 
 	// Camera screen
 	private JLabel cameraScreen;
-	private JPanel overallPanel = new JPanel(){
+	private JPanel overallPanel = new JPanel() {
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
@@ -168,22 +171,21 @@ public class Camera extends JFrame {
 		setPreferredSize(new Dimension(1920, 1080));
 		setSize(new Dimension(1920, 1080));
 		setLayout(new GridLayout(1, 1, 0, 0));
-		
+
 		overallPanel.setLayout(new GridLayout(1, 3, 0, 0));
 
 		// Buttons panel UI
 		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
 		buttonsPanel.setOpaque(false);
-		buttonsPanel.setPreferredSize(new Dimension(384,1080));
-		buttonsPanel.setSize(new Dimension(384,1080));
-		
-		
+		buttonsPanel.setPreferredSize(new Dimension(384, 1080));
+		buttonsPanel.setSize(new Dimension(384, 1080));
+
 		JLabel actionsLabel = new JLabel("Actions");
 		actionsLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		actionsLabel.setFont(new Font("Arial", Font.PLAIN, 70));
 		actionsLabel.setForeground(Color.WHITE);
 		buttonsPanel.add(actionsLabel);
-		
+
 		buttonsPanel.add(Box.createVerticalGlue());
 
 		// capture button
@@ -203,15 +205,15 @@ public class Camera extends JFrame {
 		btnDB.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		btnDB.setFont(new Font("Arial", Font.PLAIN, 40));
 		buttonsPanel.add(Box.createVerticalGlue());
-		
-		//RESULTS
-		
+
+		// RESULTS
+
 		JLabel resultsLabel = new JLabel("Results");
 		resultsLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		resultsLabel.setFont(new Font("Arial", Font.PLAIN, 70));
 		resultsLabel.setForeground(Color.WHITE);
 		resultPanel.add(resultsLabel);
-		
+
 		// result button
 		resultPanel.add(Box.createVerticalGlue());
 		btnResult = new ResultButton(this, resultPanel);
@@ -221,22 +223,22 @@ public class Camera extends JFrame {
 
 		// Results panel UI
 		resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
-		resultPanel.setPreferredSize(new Dimension(576,1080));
+		resultPanel.setPreferredSize(new Dimension(576, 1080));
 		resultPanel.setOpaque(false);
 
 		overallPanel.add(buttonsPanel);
 
 		// screen
 		cameraScreen = new JLabel();
-		cameraScreen.setPreferredSize(new Dimension(960,480));
-		cameraScreen.setSize(new Dimension(960,480));
+		cameraScreen.setPreferredSize(new Dimension(960, 480));
+		cameraScreen.setSize(new Dimension(960, 480));
 //		cameraScreen.setBounds(0, 0, 640, 480);
 		overallPanel.add(cameraScreen);
 
 		// Result pane
 		overallPanel.add(resultPanel);
 		getContentPane().add(overallPanel);
-		
+
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
@@ -266,9 +268,13 @@ public class Camera extends JFrame {
 			Point pt2 = new Point(s.width - 200, s.height - 100); // bottom-right corner of the rectangle
 			Scalar color;
 			if (getMode().equals("Apprentissage")) {
-				color = new Scalar(learningModeColor.getBlue(), learningModeColor.getGreen(), learningModeColor.getRed()); // choice of color (BGR)
+				color = new Scalar(learningModeColor.getBlue(), learningModeColor.getGreen(),
+						learningModeColor.getRed()); // choice of color (BGR)
 			} else {
-				color = new Scalar(testModeColor.getBlue(), testModeColor.getGreen(), testModeColor.getRed()); // choice of color (BGR)
+				color = new Scalar(testModeColor.getBlue(), testModeColor.getGreen(), testModeColor.getRed()); // choice
+																												// of
+																												// color
+																												// (BGR)
 			}
 			int th = 2; // choice of thickness
 			Imgproc.rectangle(image, pt1, pt2, color, th); // creation
@@ -300,49 +306,16 @@ public class Camera extends JFrame {
 					Imgcodecs.imwrite(userDirectory + "/Test/" + getImName() + "_Test.jpg", image_crop);
 
 					// test sift capture test + image bdd
-	
 
-					// test poker
-					Imgcodecs imageCodecs = new Imgcodecs();
+					Mat mat = Sift.compareCards(bw, BDD);
+					
+					byte[] imageData1;
+					final MatOfByte buf1 = new MatOfByte();
+					Imgcodecs.imencode(".jpg", image, buf1);
 
-					// Boucle pour comparer la carte a toutes les cartes de la BDD
+					imageData = buf1.toArray();
 
-					String[] imagesPath = BDD.list();
-					Integer compteur = 0;
-					double max_rate=0;
-					Mat im_proche=new Mat();
-					String bestMatch = "";
-					for (String imgPath : imagesPath) {
-						Sift sif = new Sift();
-						// Ici le compteur nous sert uniquement à différencier chaque image, si on le
-						// mets pas, les images sont écrasées au fur et à mesure
-						// et donc on n'as que le dernier résultat.
-						compteur++;
-						File currentImg = new File(BDD.getPath(), imgPath);
-						Mat img = imageCodecs.imread(currentImg.getPath());
-
-						Mat outImg = sif.compareCards(bw, img);
-						// On store l'image montrant la comparaison dans le dossier test
-						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result"
-								+ compteur.toString() + ".jpg", outImg);
-						if (sif.rate>max_rate) {
-							max_rate=sif.rate;
-							im_proche=img;
-							bestMatch = userDirectory + "/TestResults/" + getImName() + "_Test_Result" + compteur.toString() + ".jpg";
-						};
-					}
-					result=new Result(im_proche);
-					System.out.println(bestMatch);
-					System.out.println(max_rate);
-					File file = new File(bestMatch);
-					BufferedImage image = null;
-					try {
-						image = ImageIO.read(file);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					ImageIcon imageIcon = new ImageIcon(image);
+					ImageIcon imageIcon = new ImageIcon(imageData);
 					JLabel label = new JLabel(imageIcon);
 					resultPanel.add(label);
 
@@ -393,10 +366,9 @@ public class Camera extends JFrame {
 				}
 				clicked_bdd = false;
 			}
-			/*if (clicked_result) {
-				result.show();
-				clicked_result = false;
-			} */
+			/*
+			 * if (clicked_result) { result.show(); clicked_result = false; }
+			 */
 		}
 
 	}
