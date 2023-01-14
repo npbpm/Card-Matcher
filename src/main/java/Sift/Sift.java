@@ -19,7 +19,7 @@ public class Sift {
 	public double rate;
 	
 	public void showSift(Mat i) {
-		SIFT s = SIFT.create(20);
+		SIFT s = SIFT.create();
 		 MatOfKeyPoint keyPointI = new MatOfKeyPoint();
 	     Mat descriptor = new Mat(i.height(),i.width(),0);
 	     Mat mask1 = new Mat();
@@ -30,7 +30,7 @@ public class Sift {
 	
 	public Mat compareCards(Mat i1, Mat i2) {
 		//i2 c'est l'image a comparer
-		SIFT s = SIFT.create(20);
+		SIFT s = SIFT.create(80);
 		
 		Mat bw = new Mat();
 		Imgproc.cvtColor(i2, bw, Imgproc.COLOR_RGB2GRAY);
@@ -75,4 +75,5 @@ public class Sift {
 		return OutImage;
 	  
 	}
+	
 }

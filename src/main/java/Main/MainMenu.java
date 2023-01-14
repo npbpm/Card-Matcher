@@ -13,9 +13,7 @@ public class MainMenu {
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-		/*
-		 * Creation of the Apprentissage and Test Folders
-		 * */
+		// Creation of the Apprentissage and Test Folders
 		File apprentissage = new File(userDirectory + "/Apprentissage");
 		if(!apprentissage.exists()) {
 			apprentissage.mkdir();
