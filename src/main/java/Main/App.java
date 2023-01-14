@@ -7,7 +7,7 @@ import org.opencv.core.Core;
 
 import Camera.Camera;
 
-public class MainMenu {
+public class App {
 	// Main driver method
 	private static String userDirectory = System.getProperty("user.dir");
 	public static void main(String[] args) {

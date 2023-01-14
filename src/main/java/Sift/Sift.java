@@ -30,7 +30,8 @@ public class Sift {
 	
 	public Mat compareCards(Mat i1, Mat i2) {
 		//i2 c'est l'image a comparer
-		SIFT s = SIFT.create(80);
+		//For a database with 6-9 images per card, 150 points should be enough
+		SIFT s = SIFT.create(180);
 		
 		Mat bw = new Mat();
 		Imgproc.cvtColor(i2, bw, Imgproc.COLOR_RGB2GRAY);
