@@ -4,22 +4,25 @@ package Sift;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDMatch;
 import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.Scalar;
 import org.opencv.core.DMatch;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.Features2d;
 import org.opencv.features2d.SIFT;
 import org.opencv.imgproc.Imgproc;
 
+
 public class Sift {
 	
 	public double rate;
 	
 	public void showSift(Mat i) {
-		SIFT s = SIFT.create(20);
+		SIFT s = SIFT.create(30);
 		 MatOfKeyPoint keyPointI = new MatOfKeyPoint();
 	     Mat descriptor = new Mat(i.height(),i.width(),0);
 	     Mat mask1 = new Mat();
@@ -30,7 +33,7 @@ public class Sift {
 	
 	public Mat compareCards(Mat i1, Mat i2) {
 		//i2 c'est l'image a comparer
-		SIFT s = SIFT.create(20);
+		SIFT s = SIFT.create(30);
 		
 		Mat bw = new Mat();
 		Imgproc.cvtColor(i2, bw, Imgproc.COLOR_RGB2GRAY);
@@ -56,7 +59,7 @@ public class Sift {
 		List<DMatch> goodMatch = new ArrayList<DMatch>();
 		for (int i = 0; i < l.size(); i++) {
 			DMatch dmatch = l.get(i);
-			if (Math.abs(dmatch.queryIdx - dmatch.trainIdx) < 10f) {
+			if (Math.abs(dmatch.queryIdx - dmatch.trainIdx) < 5f) {   //check cette distance (la faire ressortir)
 				goodMatch.add(dmatch);
 			}
 			
@@ -73,6 +76,10 @@ public class Sift {
 		Features2d.drawMatches(i1, kp1, i2, kp2, Matches, OutImage);
 		
 		return OutImage;
+
 	  
 	}
 }
+
+// voir le top3 des images les + proches 
+// voir si le pb vient de la façon de comparer ou du decripteur qui place mal les points

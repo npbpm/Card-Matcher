@@ -52,7 +52,7 @@ import org.opencv.videoio.VideoCapture;
 import Buttons.TestButton;
 import Buttons.dbButton;
 import Buttons.ResultButton;
-import Sift.Sift;
+import Sift.*;
 import Buttons.SaveButton;
 
 // Class - Swing Class
@@ -263,7 +263,7 @@ public class Camera extends JFrame {
 			image = flip;
 			Size s = src.size();
 			Point pt1 = new Point(s.width - 350, s.height - 350); // top-left corner of the rectangle
-			Point pt2 = new Point(s.width - 200, s.height - 100); // bottom-right corner of the rectangle
+			Point pt2 = new Point(s.width - 200, s.height - 130); // bottom-right corner of the rectangle
 			Scalar color;
 			if (getMode().equals("Apprentissage")) {
 				color = new Scalar(learningModeColor.getBlue(), learningModeColor.getGreen(), learningModeColor.getRed()); // choice of color (BGR)
@@ -299,9 +299,6 @@ public class Camera extends JFrame {
 					Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
 					Imgcodecs.imwrite(userDirectory + "/Test/" + getImName() + "_Test.jpg", image_crop);
 
-					// test sift capture test + image bdd
-	
-
 					// test poker
 					Imgcodecs imageCodecs = new Imgcodecs();
 
@@ -314,6 +311,7 @@ public class Camera extends JFrame {
 					String bestMatch = "";
 					for (String imgPath : imagesPath) {
 						Sift sif = new Sift();
+						Flann f = new Flann();
 						// Ici le compteur nous sert uniquement à différencier chaque image, si on le
 						// mets pas, les images sont écrasées au fur et à mesure
 						// et donc on n'as que le dernier résultat.
@@ -321,12 +319,13 @@ public class Camera extends JFrame {
 						File currentImg = new File(BDD.getPath(), imgPath);
 						Mat img = imageCodecs.imread(currentImg.getPath());
 
-						Mat outImg = sif.compareCards(bw, img);
+						//Mat outImg = sif.compareCards(bw, img);
+						Mat outImg = f.run(bw, img);
 						// On store l'image montrant la comparaison dans le dossier test
 						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result"
 								+ compteur.toString() + ".jpg", outImg);
-						if (sif.rate>max_rate) {
-							max_rate=sif.rate;
+						if (f.rate>max_rate) {
+							max_rate=f.rate;
 							im_proche=img;
 							bestMatch = userDirectory + "/TestResults/" + getImName() + "_Test_Result" + compteur.toString() + ".jpg";
 						};
