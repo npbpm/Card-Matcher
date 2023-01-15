@@ -18,7 +18,7 @@ public class Save {
 		// create FileWriter object with file as parameter
 		FileWriter outputfile = null;
 		try {
-			outputfile = new FileWriter(file);
+			outputfile = new FileWriter(file, true);// the second argument indicates that we want to append an other line and not overwrite
 			// create CSVWriter object filewriter object as parameter
 			CSVWriter writer = new CSVWriter(outputfile);
 			// add data to csv

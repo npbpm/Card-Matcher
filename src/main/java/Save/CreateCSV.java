@@ -15,6 +15,7 @@ import com.opencsv.CSVWriter;
  */
 public class CreateCSV {
 	public String pathToFile;
+	private File file;
 	public CreateCSV(String filename) {
 		// creating the file 
 		try {
@@ -29,7 +30,7 @@ public class CreateCSV {
         }
 		pathToFile=filename; 
 		//for now I'll leave it like this I would like to concatenate the path and the filename to be more precise
-	    File file = new File(pathToFile);
+	    file = new File(pathToFile);
 	    try {
 	        // create FileWriter object with file as parameter
 	        FileWriter outputfile = new FileWriter(file);
@@ -48,5 +49,9 @@ public class CreateCSV {
 	        // TODO Auto-generated catch block
 	        e.printStackTrace();
 	    }
+	    
+	};
+	public File getRefToFile() {
+		return this.file;
 	}
 }

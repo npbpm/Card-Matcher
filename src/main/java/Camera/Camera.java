@@ -50,7 +50,10 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 import Buttons.TestButton;
-import Buttons.dbButton;
+import Main.Application;
+import Read.ReadAllLine;
+import Save.Save;
+import Buttons.DbButton;
 import Buttons.ResultButton;
 import Sift.Sift;
 import Buttons.SaveButton;
@@ -199,7 +202,7 @@ public class Camera extends JFrame {
 		btnFolderChoice.setFont(new Font("Arial", Font.PLAIN, 40));
 		buttonsPanel.add(Box.createVerticalGlue());
 		// folder button
-		btnDB = new dbButton(this, buttonsPanel);
+		btnDB = new DbButton(this, buttonsPanel);
 		btnDB.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 		btnDB.setFont(new Font("Arial", Font.PLAIN, 40));
 		buttonsPanel.add(Box.createVerticalGlue());
@@ -372,6 +375,10 @@ public class Camera extends JFrame {
 					Mat image_crop = new Mat(image, rectCrop);
 
 					Imgcodecs.imwrite(path + name + ".jpg", image_crop);
+					// add the points in the csv
+					String[] myData={name,"Les POI tkt"};
+					new Save(Application.appCSV, myData);
+					new ReadAllLine (Application.appCSV);
 				}
 
 				clicked_save = false;
@@ -393,10 +400,6 @@ public class Camera extends JFrame {
 				}
 				clicked_bdd = false;
 			}
-			/*if (clicked_result) {
-				result.show();
-				clicked_result = false;
-			} */
 		}
 
 	}
