@@ -5,7 +5,7 @@ import java.io.File;
 
 import org.opencv.core.Core;
 
-import Camera.Camera;
+import CameraVue.Camera;
 
 public class App {
 	// Main driver method
