@@ -32,11 +32,14 @@ public class ButtonCardName extends JFrame {
 	private JTextArea txtrChoisissez;
 	private JTextArea txtrcrivez;
 	private JTextArea txtrOu;
+	private final String userDirectory;
 
 	/**
 	 * Create the frame.
 	 */
-	public ButtonCardName(final Mat image) {
+	public ButtonCardName(final Mat image, final String userDirectory) {
+		this.userDirectory = userDirectory;
+		
 		setBackground(Color.DARK_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 112);
@@ -112,11 +115,10 @@ public class ButtonCardName extends JFrame {
 				Rect rectCrop = new Rect(pt1, pt2);
 				Mat image_crop = new Mat(image, rectCrop);	
 				// write to file
-				Imgcodecs.imwrite("images/" + name + ".jpg", image_crop);
+				Imgcodecs.imwrite(userDirectory + "/Apprentissage/" + name + ".jpg", image_crop);
 				dispose();
 			}
 		});
 		contentPane.add(btnNewButton, "cell 4 1 5 1,alignx left,aligny top");
-	}
-
+	}	
 }

@@ -368,7 +368,7 @@ public class Camera extends JFrame {
 //					}
 				// capture and save to file
 				if (clicked_save) {
-					ButtonCardName tempframe = new ButtonCardName(image);
+					ButtonCardName tempframe = new ButtonCardName(image, userDirectory);
 					tempframe.setVisible(true);
 
 					clicked_save = false;
