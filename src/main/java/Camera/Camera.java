@@ -16,12 +16,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 // Importing date class of sql package
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -56,6 +52,7 @@ import org.opencv.videoio.VideoCapture;
 import Buttons.TestButton;
 import Buttons.dbButton;
 import Buttons.ResultButton;
+import Sift.Flann;
 import Sift.Sift;
 import Buttons.SaveButton;
 
@@ -307,15 +304,55 @@ public class Camera extends JFrame {
 
 					// test sift capture test + image bdd
 
-					Mat mat = Sift.compareCards(bw, BDD);
-					
-					byte[] imageData1;
-					final MatOfByte buf1 = new MatOfByte();
-					Imgcodecs.imencode(".jpg", image, buf1);
+					// test poker
+					Imgcodecs imageCodecs = new Imgcodecs();
 
-					imageData = buf1.toArray();
+					// Boucle pour comparer la carte a toutes les cartes de la BDD
 
-					ImageIcon imageIcon = new ImageIcon(imageData);
+					String[] imagesPath = BDD.list();
+					Integer compteur = 0;
+					double max_rate = 0;
+					Mat im_proche = new Mat();
+					String bestMatch = "";
+					for (String imgPath : imagesPath) {
+						Flann sif = new Flann();
+						// Ici le compteur nous sert uniquement à différencier chaque image, si on le
+						// mets pas, les images sont écrasées au fur et à mesure
+						// et donc on n'as que le dernier résultat.
+						compteur++;
+						File currentImg = new File(BDD.getPath(), imgPath);
+						Mat img = imageCodecs.imread(currentImg.getPath());
+
+						Mat resizeImage = new Mat();
+						Imgproc.resize(img, resizeImage, bw.size(), 0, 0, Imgproc.INTER_LINEAR);
+
+
+						img = resizeImage;
+
+						Mat outImg = sif.run(bw, img);
+						// On store l'image montrant la comparaison dans le dossier test
+						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result"
+								+ compteur.toString() + ".jpg", outImg);
+						if (sif.rate > max_rate) {
+							max_rate = sif.rate;
+							im_proche = img;
+							bestMatch = userDirectory + "/TestResults/" + getImName() + "_Test_Result"
+									+ compteur.toString() + ".jpg";
+						}
+						;
+					}
+					result = new Result(im_proche);
+					System.out.println(bestMatch);
+					System.out.println(max_rate);
+					File file = new File(bestMatch);
+					BufferedImage image = null;
+					try {
+						image = ImageIO.read(file);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					ImageIcon imageIcon = new ImageIcon(image);
 					JLabel label = new JLabel(imageIcon);
 					resultPanel.add(label);
 
