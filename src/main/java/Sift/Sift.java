@@ -31,7 +31,7 @@ public class Sift {
 	public Mat compareCards(Mat i1, Mat i2) {
 		//i2 c'est l'image a comparer
 		//For a database with 6-9 images per card, 150 points should be enough
-		SIFT s = SIFT.create(180);
+		SIFT s = SIFT.create();
 		
 		Mat bw = new Mat();
 		Imgproc.cvtColor(i2, bw, Imgproc.COLOR_RGB2GRAY);
@@ -57,7 +57,7 @@ public class Sift {
 		List<DMatch> goodMatch = new ArrayList<DMatch>();
 		for (int i = 0; i < l.size(); i++) {
 			DMatch dmatch = l.get(i);
-			if (Math.abs(dmatch.queryIdx - dmatch.trainIdx) < 10f) {
+			if (Math.abs(dmatch.queryIdx - dmatch.trainIdx) < 5f) {
 				goodMatch.add(dmatch);
 			}
 			
