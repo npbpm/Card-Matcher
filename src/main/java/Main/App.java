@@ -5,12 +5,19 @@ import java.io.File;
 
 import org.opencv.core.Core;
 
-import Camera.Camera;
+import CameraVue.Camera;
+import Save.CreateCSV;
 
 public class App {
 	// Main driver method
 	private static String userDirectory = System.getProperty("user.dir");
+	public static File appCSV;
+	
 	public static void main(String[] args) {
+		
+		// creation of the csv to put card descriptors 
+		CreateCSV CSV = new CreateCSV("ApprentissageCSV");
+		appCSV = CSV.getRefToFile();
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
 		// Creation of the Apprentissage and Test Folders
