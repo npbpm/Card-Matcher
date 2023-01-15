@@ -7,15 +7,13 @@ import org.opencv.core.Core;
 
 import Camera.Camera;
 
-public class MainMenu {
+public class App {
 	// Main driver method
 	private static String userDirectory = System.getProperty("user.dir");
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
-		/*
-		 * Creation of the Apprentissage and Test Folders
-		 * */
+		// Creation of the Apprentissage and Test Folders
 		File apprentissage = new File(userDirectory + "/Apprentissage");
 		if(!apprentissage.exists()) {
 			apprentissage.mkdir();

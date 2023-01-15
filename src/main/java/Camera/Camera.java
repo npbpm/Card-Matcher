@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -38,6 +39,7 @@ import javax.swing.JPanel;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfDMatch;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -251,6 +253,8 @@ public class Camera extends JFrame {
 		image = new Mat();
 		byte[] imageData;
 
+		updatePanel();
+
 		ImageIcon icon;
 		while (true) {
 			// read image to matrix
@@ -299,6 +303,9 @@ public class Camera extends JFrame {
 					Imgproc.cvtColor(image_crop, bw, Imgproc.COLOR_RGB2GRAY);
 					Imgcodecs.imwrite(userDirectory + "/Test/" + getImName() + "_Test.jpg", image_crop);
 
+					// test sift capture test + image bdd
+	
+
 					// test poker
 					Imgcodecs imageCodecs = new Imgcodecs();
 
@@ -306,9 +313,10 @@ public class Camera extends JFrame {
 
 					String[] imagesPath = BDD.list();
 					Integer compteur = 0;
-					double max_rate=0;
-					Mat im_proche=new Mat();
+					double max_rate = 0;
+					Mat im_proche = new Mat();
 					String bestMatch = "";
+					String resultName = new String();
 					for (String imgPath : imagesPath) {
 						Sift sif = new Sift();
 						Flann f = new Flann();
@@ -324,30 +332,78 @@ public class Camera extends JFrame {
 						// On store l'image montrant la comparaison dans le dossier test
 						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result"
 								+ compteur.toString() + ".jpg", outImg);
-						if (f.rate>max_rate) {
-							max_rate=f.rate;
-							im_proche=img;
-							bestMatch = userDirectory + "/TestResults/" + getImName() + "_Test_Result" + compteur.toString() + ".jpg";
-						};
+
+						if (sif.rate > max_rate) {
+							max_rate = sif.rate;
+							im_proche = img;
+							resultName = currentImg.getPath();
+							bestMatch = userDirectory + "/TestResults/" + getImName() + "_Test_Result"
+									+ compteur.toString() + ".jpg";
+						}
+
 					}
-					result=new Result(im_proche);
-					System.out.println(bestMatch);
-					System.out.println(max_rate);
-					File file = new File(bestMatch);
-					BufferedImage image = null;
-					try {
-						image = ImageIO.read(file);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					ImageIcon imageIcon = new ImageIcon(image);
-					JLabel label = new JLabel(imageIcon);
+
+					JLabel label;
+					//max_rate = 60;
+					//if (max_rate >= 50) {
+						// result = new Result(im_proche);
+						File resultFile = new File(resultName);
+						try {
+							result = ImageIO.read(resultFile);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						if (result.getHeight() > 300) {
+							result = resize(result, 200, 300);
+						}
+
+						System.out.println("Carte choisie: " + bestMatch);
+						System.out.println("Taux de correspondance: " + max_rate);
+
+						File file = new File(bestMatch);
+						BufferedImage imageWithPointers = null;
+						try {
+							imageWithPointers = ImageIO.read(file);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						ImageIcon imageIcon = new ImageIcon(result);
+						label = new JLabel(imageIcon);
+					//} else {
+					//	label = new JLabel("Not Found!");
+					//	label.setPreferredSize(new Dimension(200, 200));
+					//	label.setFont(new Font("Arial", Font.PLAIN, 50));
+					//	label.setForeground(Color.WHITE);
+					//}
+					// RESULTS
+					resultPanel.removeAll();
+					resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
+
+					JLabel resultsLabel = new JLabel("Results");
+					resultsLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+					resultsLabel.setFont(new Font("Arial", Font.PLAIN, 70));
+					resultsLabel.setForeground(Color.WHITE);
+					resultPanel.add(resultsLabel);
+
+					resultPanel.add(Box.createVerticalGlue());
 					resultPanel.add(label);
+					resultPanel.add(Box.createVerticalGlue());
+
+					JLabel resultRate = new JLabel("Taux de correspondance: " + max_rate + "%");
+					resultRate.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+					resultRate.setFont(new Font("Arial", Font.PLAIN, 25));
+					resultRate.setForeground(Color.WHITE);
+					resultPanel.add(resultRate);
+
+					overallPanel.add(resultPanel);
 
 				}
 
 				clicked_test = false;
+
+				updatePanel();
 			}
 			// result = new Result(image);
 
@@ -369,6 +425,12 @@ public class Camera extends JFrame {
 
 					Rect rectCrop = new Rect(pt1, pt2);
 					Mat image_crop = new Mat(image, rectCrop);
+
+					File checkExistingFile = new File(userDirectory + "/Apprentissage/" + name + ".jpg");
+					while(checkExistingFile.exists()) {
+						name = JOptionPane.showInputDialog(this, "Name already Exists! Enter new image name");
+						checkExistingFile = new File(userDirectory + "/Apprentissage/" + name + ".jpg");
+					}
 
 					Imgcodecs.imwrite(path + name + ".jpg", image_crop);
 				}
@@ -398,5 +460,138 @@ public class Camera extends JFrame {
 			} */
 		}
 
+	}
+
+	public void changeClickedTest() {
+		clicked_test = !clicked_test;
+	}
+
+	public void changeClickedSave() {
+		clicked_save = !clicked_save;
+	}
+
+	public void changeClickedBDD() {
+		clicked_bdd = !clicked_bdd;
+	}
+
+	public void changeClickedResult() {
+		clicked_result = !clicked_result;
+	}
+
+	public void changeFolderPath(String sentence) {
+		folderPath = JOptionPane.showInputDialog(sentence);
+	}
+
+	public void setImName(String name) {
+		imName = name;
+	}
+
+	public String getImName() {
+		return imName;
+	}
+
+	public void setMode() {
+		if (getMode().equals("Apprentissage")) {
+			mode = "Test";
+		} else {
+			mode = "Apprentissage";
+		}
+	}
+
+	public String getMode() {
+		return mode;
+	}
+
+	public boolean isDirectoryEmpty(File directory) {
+		String[] files = directory.list();
+		return files.length == 0;
+	}
+
+	public static BufferedImage resize(BufferedImage img, int newW, int newH) {
+		Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+		BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = dimg.createGraphics();
+		g2d.drawImage(tmp, 0, 0, null);
+		g2d.dispose();
+
+		return dimg;
+	}
+
+	private void stylePanel() {
+		// STYLING
+
+		// Designing UI
+		setPreferredSize(new Dimension(1920, 1080));
+		setSize(new Dimension(1920, 1080));
+		setLayout(new GridLayout(1, 1, 0, 0));
+
+		overallPanel.setLayout(new GridLayout(1, 3, 0, 0));
+
+		// Buttons panel UI
+		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
+		buttonsPanel.setOpaque(false);
+		buttonsPanel.setPreferredSize(new Dimension(384, 1080));
+		buttonsPanel.setSize(new Dimension(384, 1080));
+
+		JLabel actionsLabel = new JLabel("Actions");
+		actionsLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		actionsLabel.setFont(new Font("Arial", Font.PLAIN, 70));
+		actionsLabel.setForeground(Color.WHITE);
+		buttonsPanel.add(actionsLabel);
+
+		buttonsPanel.add(Box.createVerticalGlue());
+
+		// screen
+		cameraScreen = new JLabel();
+		cameraScreen.setPreferredSize(new Dimension(1200, 480));
+		cameraScreen.setSize(new Dimension(1200, 480));
+		cameraScreen.setBounds(0, 0, 640, 480);
+		cameraScreen.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+
+		cameraPanel.setLayout(new BoxLayout(cameraPanel, BoxLayout.Y_AXIS));
+		cameraPanel.setOpaque(false);
+		cameraPanel.add(Box.createVerticalGlue());
+		cameraPanel.add(cameraScreen);
+
+		// capture button
+		btnCapture = new TestButton(this, cameraPanel);
+		btnCapture.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		btnCapture.setBackground(testModeColor);
+		btnCapture.setPreferredSize(new Dimension(500, 80));
+		btnCapture.setFont(new Font("Arial", Font.PLAIN, 40));
+		cameraPanel.add(Box.createVerticalGlue());
+		// folder button
+		btnFolderChoice = new SaveButton(this, buttonsPanel);
+		btnFolderChoice.setBackground(learningModeColor);
+		btnFolderChoice.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		btnFolderChoice.setFont(new Font("Arial", Font.PLAIN, 40));
+		buttonsPanel.add(Box.createVerticalGlue());
+		// folder button
+		btnDB = new dbButton(this, buttonsPanel);
+		btnDB.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+		btnDB.setFont(new Font("Arial", Font.PLAIN, 40));
+		buttonsPanel.add(Box.createVerticalGlue());
+
+		// Results panel UI
+		resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
+		resultPanel.setPreferredSize(new Dimension(576, 1080));
+		resultPanel.setOpaque(false);
+
+		overallPanel.add(buttonsPanel);
+
+		overallPanel.add(cameraPanel);
+
+		// Result panel
+		getContentPane().add(overallPanel);
+
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
+	}
+
+	private void updatePanel() {
+		revalidate();
+		repaint();
 	}
 }

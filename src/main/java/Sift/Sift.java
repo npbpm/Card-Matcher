@@ -22,7 +22,7 @@ public class Sift {
 	public double rate;
 	
 	public void showSift(Mat i) {
-		SIFT s = SIFT.create(30);
+		SIFT s = SIFT.create();
 		 MatOfKeyPoint keyPointI = new MatOfKeyPoint();
 	     Mat descriptor = new Mat(i.height(),i.width(),0);
 	     Mat mask1 = new Mat();
@@ -33,7 +33,8 @@ public class Sift {
 	
 	public Mat compareCards(Mat i1, Mat i2) {
 		//i2 c'est l'image a comparer
-		SIFT s = SIFT.create(30);
+		//For a database with 6-9 images per card, 150 points should be enough
+		SIFT s = SIFT.create();
 		
 		Mat bw = new Mat();
 		Imgproc.cvtColor(i2, bw, Imgproc.COLOR_RGB2GRAY);
@@ -79,6 +80,7 @@ public class Sift {
 
 	  
 	}
+	
 }
 
 // voir le top3 des images les + proches 
