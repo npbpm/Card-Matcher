@@ -57,12 +57,7 @@ import Main.App;
 import Read.ReadAllLine;
 import Save.Save;
 import ButtonsVue.ButtonCardName;
-<<<<<<< HEAD
-import ButtonsVue.ResultButton;
-import SiftUtils.*;
-=======
 import SiftUtils.Sift;
->>>>>>> Mathilde
 import ButtonsVue.SaveButton;
 
 // Class - Swing Class
@@ -205,7 +200,6 @@ public class Camera extends JFrame {
 					String resultName = new String();
 					for (String imgPath : imagesPath) {
 						Sift sif = new Sift();
-						Flann f = new Flann();
 						// Ici le compteur nous sert uniquement à différencier chaque image, si on le
 						// mets pas, les images sont écrasées au fur et à mesure
 						// et donc on n'as que le dernier résultat.
@@ -213,17 +207,13 @@ public class Camera extends JFrame {
 						File currentImg = new File(BDD.getPath(), imgPath);
 						Mat img = imageCodecs.imread(currentImg.getPath());
 
-<<<<<<< HEAD
-						Mat outImg = f.run(bw, img);
-=======
 						Mat outImg = sif.run(bw, img);
->>>>>>> Mathilde
 						// On store l'image montrant la comparaison dans le dossier test
 						Imgcodecs.imwrite(userDirectory + "/TestResults/" + getImName() + "_Test_Result"
 								+ compteur.toString() + ".jpg", outImg);
 
-						if (f.rate > max_rate) {
-							max_rate = f.rate;
+						if (sif.rate > max_rate) {
+							max_rate = sif.rate;
 							im_proche = img;
 							resultName = currentImg.getPath();
 							bestMatch = userDirectory + "/TestResults/" + getImName() + "_Test_Result"
