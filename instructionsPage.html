@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>Card Matcher Instructions!</title>
+  </head>
+  <body>
+    <header class="intro">
+      <h1>How to use?</h1>
+      <p>
+        Bonjour et bienvenue sur le CardMatcher du Groupe Image2 !<br />
+        Ce programme va vous permettre d’enregistrer et de comparer des cartes
+        de jeu à travers votre webcam. Pour cela, voici quelques instructions
+        pour vous guider lors de votre utilisation.
+      </p>
+    </header>
+    <div class="content">
+      <ul class="ul-apprentissage">
+        En cliquant sur le mode
+        <label id="appr">Apprentissage</label>
+        :
+        <li>
+          Vous pouvez maintenant créer votre propre base de données de cartes.
+        </li>
+        <li>
+          Placez une carte à jouer dans le rectangle vert et appuyez sur
+          Apprentissage.
+        </li>
+        <li>
+          Afin de nommer la carte suivez ces normes : [numéro de la
+          carte][couleur de la carte] Avec : Coeur = C / Carreau = D / Trèfle =
+          T / Pique = P Et pour les têtes : Valet = V / Reine = Q / Roi = K / As
+          = A
+        </li>
+        <li>
+          Les cartes que vous enregistrez se retrouvent alors dans le dossier
+          “Apprentissage” qui constitue votre base de données personnelle. Les
+          cartes enregistrées sur celle-ci le resteront même à la fin du
+          programme.
+        </li>
+        <li>
+          Si une carte possède déjà le nom que vous choisissez, cette dernière
+          sera écrasée.
+        </li>
+      </ul>
+      <ul class="ul-test">
+        <li>Vous allez pouvoir tester la reconnaissance de cartes.</li>
+        <li>
+          Commencez par choisir une base de données à l’aide du bouton “Select
+          Database”. Cette dernière pourra être une base de données existante
+          que vous avez téléchargé, ou par défaut la base de données
+          Apprentissage que vous avez alimenté.
+        </li>
+        <li>Placez une carte dans le rectangle rouge et appuyez sur Test.</li>
+        <li>
+          Suite à cela, à droite de l’écran s’affiche alors la carte la plus
+          proche de celle que vous venez de tester ainsi qu’un taux de
+          correspondance.
+        </li>
+        <li>
+          Vous retrouverez l’image de la carte que vous testez au sein du
+          dossier Test, et dans le dossier TestResult la comparaison de cette
+          carte à toutes celles de la base de données choisie.
+        </li>
+      </ul>
+    </div>
+    <footer>
+      Bonne découverte!
+      <h5>
+        Groupe Image2 - AMTOUN Niama, LENTO Orson, RABY Mathilde, PEREZ-BURBANO
+        Nicolas, GERARD Noémie
+      </h5>
+    </footer>
+  </body>
+</html>

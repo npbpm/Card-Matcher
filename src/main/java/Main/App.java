@@ -2,11 +2,13 @@ package Main;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.net.MalformedURLException;
 
 import org.opencv.core.Core;
 
 import CameraVue.Camera;
 import Save.CreateCSV;
+import UserInstructions.Instructions;
 
 public class App {
 	// Main driver method
@@ -14,7 +16,13 @@ public class App {
 	public static File appCSV;
 	
 	public static void main(String[] args) {
-		
+		Instructions instructionsTab = new Instructions();
+		try {
+			Instructions.createWindow();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// creation of the csv to put card descriptors 
 		CreateCSV CSV = new CreateCSV("ApprentissageCSV");
 		appCSV = CSV.getRefToFile();
