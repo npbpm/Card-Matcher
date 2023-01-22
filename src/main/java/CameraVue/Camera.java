@@ -268,6 +268,11 @@ public class Camera extends JFrame {
 
 					resultPanel.add(Box.createVerticalGlue());
 					resultPanel.add(label);
+					JLabel cardName = new JLabel(resultFile.getName());
+					cardName.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+					cardName.setFont(new Font("Arial", Font.PLAIN, 25));
+					cardName.setForeground(Color.WHITE);
+					resultPanel.add(cardName);
 					resultPanel.add(Box.createVerticalGlue());
 
 					JLabel resultRate = new JLabel("Taux de correspondance: " + max_rate + "%");

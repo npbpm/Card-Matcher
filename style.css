@@ -2,3 +2,13 @@ body {
     background-color: rgb(0,161,255);
     color: white
 }
+
+#appr{
+    color: rgb(10, 196, 10);
+    text-shadow: 2px 0 #000000, -2px 0 #000000, 0 2px #000000, 0 -2px #000000, 1px 1px #000000, -1px -1px #000000, 1px -1px #000000, -1px 1px #000000;
+}
+
+#test{
+    color: rgb(226, 12, 12);
+    text-shadow: 2px 0 #000000, -2px 0 #000000, 0 2px #000000, 0 -2px #000000, 1px 1px #000000, -1px -1px #000000, 1px -1px #000000, -1px 1px #000000;
+}
