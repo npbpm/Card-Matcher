@@ -15,11 +15,13 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import Main.App;
 import Read.ReadAllLine;
@@ -45,7 +47,7 @@ public class ButtonCardName extends JFrame {
 
 		setBackground(Color.DARK_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 112);
+		setBounds(100, 100, 503, 200);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.BLACK);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -62,71 +64,76 @@ public class ButtonCardName extends JFrame {
 				"5 de carreau", "6 de carreau", "7 de carreau", "8 de carreau", "9 de carreau", "10 de carreau",
 				"Valet de carreau", "Dame de carreau", "Roi de carreau" };
 		contentPane.setLayout(
-				new MigLayout("", "[143px][5px][96px][5px][4px][5px][5px][5px][104px][21px]", "[22px][22px]"));
+				new MigLayout("", "[143px][][][][5px][96px][][][5px][4px][5px][5px][][118.00][][5px][104px][21px]", "[22px][22px][][][][][][][]"));
 
 		txtrEnregistrezLeNom = new JTextArea();
+		txtrEnregistrezLeNom.setForeground(new Color(255, 255, 255));
 		txtrEnregistrezLeNom.setEditable(false);
-		txtrEnregistrezLeNom.setBackground(new Color(240, 240, 240));
+		txtrEnregistrezLeNom.setBackground(new Color(0, 0, 0));
 		txtrEnregistrezLeNom.setText("Sélectionnez le nom de la carte");
-		contentPane.add(txtrEnregistrezLeNom, "cell 0 0 5 1,alignx left,aligny top");
+		contentPane.add(txtrEnregistrezLeNom, "cell 0 0 10 1,alignx left,aligny top");
 
 		txtrChoisissez = new JTextArea();
 		txtrChoisissez.setBackground(Color.BLACK);
 		txtrChoisissez.setEditable(false);
-		contentPane.add(txtrChoisissez, "cell 6 0,alignx left,aligny top");
-
-		final JComboBox ListeNombre = new JComboBox(itemsNombre);
-
-		contentPane.add(ListeNombre, "cell 8 0,alignx left,aligny center");
-
-		txtrOu = new JTextArea();
-		txtrOu.setBackground(new Color(240, 240, 240));
-		txtrOu.setEditable(false);
-		txtrOu.setText("OU");
-		contentPane.add(txtrOu, "flowx,cell 0 1,alignx left,aligny top");
-
-		txtrcrivez = new JTextArea();
-		txtrcrivez.setBackground(new Color(240, 240, 240));
-		txtrcrivez.setEditable(false);
-		txtrcrivez.setText("manuellement ");
-		contentPane.add(txtrcrivez, "cell 0 1,alignx right,aligny top");
-
-		textField_1 = new JTextField();
-		contentPane.add(textField_1, "cell 2 1,alignx left,aligny center");
-		textField_1.setColumns(10);
-
-		ListeNombre.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				textField_1.setText("");
-			}
-		});
-//		Mat src = image;
-//		Size s = src.size();
-//		Point pt1 = new Point(s.width - 350, s.height - 350); // top-left corner of the rectangle
-//		Point pt2 = new Point(s.width - 200, s.height - 100); // bottom-right corner of the rectangle
-		JButton btnNewButton = new JButton("Enregistrez");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				name = "" + textField_1.getText();
-				if (name == "") {
-					name = ListeNombre.getSelectedItem().toString();
-				}
-				Mat src = image;
-				Size s = src.size();
-				Point pt1 = new Point(s.width - 350, s.height - 350); // top-left corner of the rectangle
-				Point pt2 = new Point(s.width - 200, s.height - 100); // bottom-right corner of the rectangle
-				Rect rectCrop = new Rect(pt1, pt2);
-				Mat image_crop = new Mat(image, rectCrop);
-				// write to file
-				Imgcodecs.imwrite(userDirectory + "/Apprentissage/" + name + ".jpg", image_crop);
-				// add the points in the csv
-				String[] myData={name,"Les POI tkt"};
-				new Save(App.appCSV, myData);
-				new ReadAllLine (App.appCSV);
-				dispose();
-			}
-		});
-		contentPane.add(btnNewButton, "cell 4 1 5 1,alignx left,aligny top");
+		contentPane.add(txtrChoisissez, "cell 11 0,alignx left,aligny top");
+														
+																final JComboBox ListeNombre = new JComboBox(itemsNombre);
+																
+																		contentPane.add(ListeNombre, "cell 13 0,alignx left,aligny center");
+																		
+																				ListeNombre.addActionListener(new ActionListener() {
+																					public void actionPerformed(ActionEvent e) {
+																						textField_1.setText("");
+																					}
+																				});
+												
+														txtrOu = new JTextArea();
+														txtrOu.setForeground(new Color(255, 255, 255));
+														txtrOu.setBackground(new Color(0, 0, 0));
+														txtrOu.setEditable(false);
+														txtrOu.setText("OU");
+														contentPane.add(txtrOu, "flowx,cell 2 1,alignx left,aligny top");
+												
+														txtrcrivez = new JTextArea();
+														txtrcrivez.setForeground(new Color(255, 255, 255));
+														txtrcrivez.setBackground(new Color(0, 0, 0));
+														txtrcrivez.setEditable(false);
+														txtrcrivez.setText("Taper manuellement le nom :");
+														contentPane.add(txtrcrivez, "cell 0 2,alignx right,aligny top");
+																
+																		textField_1 = new JTextField();
+																		contentPane.add(textField_1, "cell 13 2,alignx left,aligny center");
+																		textField_1.setColumns(10);
+																//		Mat src = image;
+																//		Size s = src.size();
+																//		Point pt1 = new Point(s.width - 350, s.height - 350); // top-left corner of the rectangle
+																//		Point pt2 = new Point(s.width - 200, s.height - 100); // bottom-right corner of the rectangle
+																		JButton btnNewButton = new JButton("Enregistrer");
+																		btnNewButton.addActionListener(new ActionListener() {
+																			public void actionPerformed(ActionEvent e) {
+																				name = "" + textField_1.getText();
+																				if (name == "") {
+																					name = ListeNombre.getSelectedItem().toString();
+																				}
+																				Mat src = image;
+																				Mat flip = new Mat();
+																				Core.flip(src, flip, 1);
+																				Size s = flip.size();
+																				Point pt1 = new Point(s.width - 350, s.height - 350); // top-left corner of the rectangle
+																				Point pt2 = new Point(s.width - 200, s.height - 100); // bottom-right corner of the rectangle
+																				Rect rectCrop = new Rect(pt1, pt2);
+																				Mat image_crop = new Mat(flip, rectCrop);
+																				// write to file
+																				Imgcodecs.imwrite(userDirectory + "/Apprentissage/" + name + ".jpg", image_crop);
+																				// add the points in the csv
+																				String[] myData={name,"Les POI tkt"};
+																				new Save(App.appCSV, myData);
+																				new ReadAllLine (App.appCSV);
+																				dispose();
+																			}
+																		});
+																		contentPane.add(btnNewButton, "cell 2 4,alignx left,aligny top");
 	}
 
 	public String get_name() {
