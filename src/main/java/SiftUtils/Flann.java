@@ -51,6 +51,7 @@ public class Flann {
                 Scalar.all(-1), new MatOfByte(), Features2d.NOT_DRAW_SINGLE_POINTS);
 
         rate=100*listOfGoodMatches.size()/knnMatches.size();
+        System.out.print(ratioThresh);
 		
 		return imgMatches;
     }

@@ -197,7 +197,7 @@ public class Camera extends JFrame {
 					String bestMatch = "";
 					String resultName = new String();
 					for (String imgPath : imagesPath) {
-						Sift sif = new Sift();
+						//Sift sif = new Sift();
 						Flann f = new Flann();
 						// Ici le compteur nous sert uniquement à différencier chaque image, si on le
 						// mets pas, les images sont écrasées au fur et à mesure
@@ -292,38 +292,34 @@ public class Camera extends JFrame {
 					setMode();
 				}
 				// prompt for enter image name
-//				String name = JOptionPane.showInputDialog(this, "Enter image name");
-//				setImName(name);
-//				if (!(name == null)) {
-//					if (name.equals("")) {
-//						name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
-//					}
-//
-//					// Write to file + crop
-//
-//					Rect rectCrop = new Rect(pt1, pt2);
-//					Mat image_crop = new Mat(image, rectCrop);
-//
-//					File checkExistingFile = new File(userDirectory + "/Apprentissage/" + name + ".jpg");
-//					while(checkExistingFile.exists()) {
-//						name = JOptionPane.showInputDialog(this, "Name already Exists! Enter new image name");
-//						checkExistingFile = new File(userDirectory + "/Apprentissage/" + name + ".jpg");
-//					}
-//
-//					Imgcodecs.imwrite(path + name + ".jpg", image_crop);
-//
-//
-//				}
-				if (clicked_save) {
-					ButtonCardName tempframe = new ButtonCardName(image, userDirectory);
-					tempframe.setVisible(true);
+				String name = JOptionPane.showInputDialog(this, "Enter image name");
+				setImName(name);
+				if (!(name == null)) {
+					if (name.equals("")) {
+						name = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss").format(new Date(HEIGHT, WIDTH, getX()));
+					}
 
-					clicked_save = false;
-					
-					
+					// Write to file + crop
+
+					Rect rectCrop = new Rect(pt1, pt2);
+					Mat image_crop = new Mat(image, rectCrop);
+
+					File checkExistingFile = new File(userDirectory + "/Apprentissage/" + name + ".jpg");
+					while(checkExistingFile.exists()) {
+						name = JOptionPane.showInputDialog(this, "Name already Exists! Enter new image name");
+						checkExistingFile = new File(userDirectory + "/Apprentissage/" + name + ".jpg");
+					}
+
+					Imgcodecs.imwrite(path + name + ".jpg", image_crop);
+
+
 				}
 
+				//ButtonCardName tempframe = new ButtonCardName(image,pt1,pt2, userDirectory);
+				//tempframe.setVisible(true);
+
 				clicked_save = false;
+					
 
 			}
 

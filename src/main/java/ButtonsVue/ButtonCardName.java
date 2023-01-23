@@ -15,6 +15,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -38,7 +39,7 @@ public class ButtonCardName extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ButtonCardName(final Mat image, final String userDirectory) {
+	public ButtonCardName(final Mat image,final Point pt1, final Point pt2, final String userDirectory) {
 		this.userDirectory = userDirectory;
 		
 		setBackground(Color.DARK_GRAY);
@@ -98,10 +99,7 @@ public class ButtonCardName extends JFrame {
 				textField_1.setText("");
 			}
 		});
-//		Mat src = image;
-//		Size s = src.size();
-//		Point pt1 = new Point(s.width - 350, s.height - 350); // top-left corner of the rectangle
-//		Point pt2 = new Point(s.width - 200, s.height - 100); // bottom-right corner of the rectangle
+		
 		JButton btnNewButton = new JButton("Enregistrez");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -109,13 +107,8 @@ public class ButtonCardName extends JFrame {
 				if (name == "") {
 					name = ListeNombre.getSelectedItem().toString();
 				}
-				Mat src = image;
-				Size s = src.size();
-				Point pt1 = new Point(s.width - 350, s.height - 350); // top-left corner of the rectangle
-				Point pt2 = new Point(s.width - 200, s.height - 100); // bottom-right corner of the rectangle
 				Rect rectCrop = new Rect(pt1, pt2);
-				Mat image_crop = new Mat(image, rectCrop);	
-				// write to file
+				Mat image_crop = new Mat(image, rectCrop);
 				Imgcodecs.imwrite(userDirectory + "/Apprentissage/" + name + ".jpg", image_crop);
 				dispose();
 			}
