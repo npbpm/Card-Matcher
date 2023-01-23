@@ -19,12 +19,7 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-// Importing date class of sql package
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -39,8 +34,6 @@ import javax.swing.JPanel;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
-import org.opencv.core.MatOfDMatch;
-import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -53,14 +46,19 @@ import org.opencv.videoio.VideoCapture;
 
 import ButtonsVue.TestButton;
 import ButtonsVue.dbButton;
-import Main.App;
-import Read.ReadAllLine;
-import Save.Save;
 import ButtonsVue.ButtonCardName;
 import SiftUtils.Sift;
 import ButtonsVue.SaveButton;
 
-// Class - Swing Class
+/**
+ * 
+ * Camera is a class that extends JFrame and captures images from a camera and
+ * displays them in a JLabel.
+ * 
+ * It also includes buttons for switching modes, saving images, choosing a
+ * directory, and accessing the database.
+ * 
+ */
 public class Camera extends JFrame {
 
 	private BufferedImage result;
@@ -69,18 +67,24 @@ public class Camera extends JFrame {
 
 	private String mode = "Apprentissage";
 
-	private MatOfKeyPoint kpts1;
-
-	// Colors
+	/**
+	 * 
+	 * Color fields for different UI elements
+	 */
 	Color learningModeColor = Color.GREEN;
 	Color testModeColor = Color.RED;
 	Color backgroundColor = Color.decode("#E0E0E0");
 	Color buttonsPanelBackgroundColor = Color.decode("#C1C9CC");
-
-	// Background Image
+	/**
+	 * 
+	 * Image field for background
+	 */
 	Image bckImg = Toolkit.getDefaultToolkit().getImage(userDirectory + "/bckgrdImg.jpg");
-
-	// Camera screen
+	/**
+	 * 
+	 * JLabel and JPanel fields for the camera screen, overall panel, camera panel,
+	 * result panel, and buttons panel
+	 */
 	private JLabel cameraScreen;
 	private JPanel overallPanel = new JPanel() {
 		@Override
@@ -92,38 +96,60 @@ public class Camera extends JFrame {
 	private JPanel cameraPanel = new JPanel();
 	private JPanel resultPanel = new JPanel();
 	private JPanel buttonsPanel = new JPanel();
-
-	// Buttons
+	/**
+	 * 
+	 * JButton fields for capture, database, and folder choice
+	 */
 	private JButton btnCapture;
 	private JButton btnDB;
 	private JButton btnFolderChoice;
-
-	// Start camera
+	/**
+	 * 
+	 * VideoCapture field for capturing images from the camera
+	 */
 	private VideoCapture capture;
-
-	// Store image as 2D matrix
+	/**
+	 * 
+	 * Mat field for storing image as a 2D matrix
+	 */
 	private Mat image;
-
-	// Select the folder to use
-	private String folderPath;
-
-	// True si l'utilisateur a cliqué sur le mode test
+	/**
+	 * 
+	 * boolean fields for keeping track of user clicks
+	 */
 	public boolean clicked_test = false;
 	public boolean clicked_save = false;
 	public boolean clicked_bdd = false;
 	public boolean clicked_result = false;
-
-	// Path
+	/**
+	 * 
+	 * String field for the user's directory and path
+	 */
 	private static String userDirectory = System.getProperty("user.dir");
 	private String path;
 
+	/**
+	 * 
+	 * Constructor for Camera class.
+	 * 
+	 * @param Directory the directory for the images to be saved
+	 */
 	public Camera(String Directory) {
 		path = userDirectory + "/Apprentissage/";
 
 		stylePanel();
 	}
 
-	// Creating a camera
+	/**
+	 * 
+	 * The startCamera() method creates a new VideoCapture object, a new Matrix
+	 * object,
+	 * 
+	 * and starts capturing images from the camera and displaying them in a JLabel.
+	 * 
+	 * It also creates and displays buttons for switching modes, saving images,
+	 * choosing a directory, and accessing the database.
+	 */
 	@SuppressWarnings("deprecation")
 	public void startCamera() {
 
@@ -241,9 +267,8 @@ public class Camera extends JFrame {
 					System.out.println("Taux de correspondance: " + max_rate);
 
 					File file = new File(bestMatch);
-					BufferedImage imageWithPointers = null;
 					try {
-						imageWithPointers = ImageIO.read(file);
+						ImageIO.read(file);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -364,7 +389,7 @@ public class Camera extends JFrame {
 	}
 
 	public void changeFolderPath(String sentence) {
-		folderPath = JOptionPane.showInputDialog(sentence);
+		JOptionPane.showInputDialog(sentence);
 	}
 
 	public void setImName(String name) {
@@ -403,6 +428,11 @@ public class Camera extends JFrame {
 		return dimg;
 	}
 
+	/**
+	 * 
+	 * The stylePanel() method is used to set the layout, background color, and
+	 * other visual properties of the JPanels used in the frame.
+	 */
 	private void stylePanel() {
 		// STYLING
 
@@ -475,6 +505,12 @@ public class Camera extends JFrame {
 		setVisible(true);
 	}
 
+	/**
+	 * 
+	 * The updatePanel() method is used to update the frame with the latest captured
+	 * image. It converts the Matrix object to a BufferedImage and updates the
+	 * JLabel with this image.
+	 */
 	private void updatePanel() {
 		revalidate();
 		repaint();

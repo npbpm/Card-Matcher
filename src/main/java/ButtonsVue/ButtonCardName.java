@@ -1,15 +1,11 @@
 package ButtonsVue;
-//package opencvcamera;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -26,6 +22,14 @@ import Read.ReadAllLine;
 import Save.Save;
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * 
+ * The class ButtonCardName creates a JFrame that allows the user to enter a
+ * name for a card and save the card to a CSV file.
+ * 
+ * It uses the OpenCV library to save the card image as well.
+ * 
+ */
 public class ButtonCardName extends JFrame {
 
 	private JPanel contentPane;
@@ -35,14 +39,14 @@ public class ButtonCardName extends JFrame {
 	private JTextArea txtrChoisissez;
 	private JTextArea txtrcrivez;
 	private JTextArea txtrOu;
-	private final String userDirectory;
 
 	/**
-	 * Create the frame.
+	 * Constructor for the ButtonCardName class.
+	 *
+	 * @param image         the Mat object containing the image of the card
+	 * @param userDirectory the user's current working directory
 	 */
 	public ButtonCardName(final Mat image, final String userDirectory) {
-		this.userDirectory = userDirectory;
-
 		setBackground(Color.DARK_GRAY);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 112);
@@ -120,9 +124,9 @@ public class ButtonCardName extends JFrame {
 				// write to file
 				Imgcodecs.imwrite(userDirectory + "/Apprentissage/" + name + ".jpg", image_crop);
 				// add the points in the csv
-				String[] myData={name,"Les POI tkt"};
+				String[] myData = { name, "Les POI tkt" };
 				new Save(App.appCSV, myData);
-				new ReadAllLine (App.appCSV);
+				new ReadAllLine(App.appCSV);
 				dispose();
 			}
 		});
