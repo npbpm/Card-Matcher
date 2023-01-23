@@ -113,7 +113,7 @@ public class ButtonCardName extends JFrame {
 																		btnNewButton.addActionListener(new ActionListener() {
 																			public void actionPerformed(ActionEvent e) {
 																				name = "" + textField_1.getText();
-																				if (name == "") {
+																				if (name.equals("")) {
 																					name = ListeNombre.getSelectedItem().toString();
 																				}
 																				Mat src = image;
