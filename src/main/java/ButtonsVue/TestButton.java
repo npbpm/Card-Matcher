@@ -16,6 +16,7 @@ import CameraVue.Camera;
  * clicked, it changes the value of the clicked_test boolean in the Camera class
  * to true.
  */
+@SuppressWarnings("serial")
 public class TestButton extends JButton {
 	/**
 	 * Camera object

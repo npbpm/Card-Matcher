@@ -10,6 +10,7 @@ import Save.Save;
 
 public class SuppLine {
 	private List<String[]> data=new ArrayList<String[]>();
+	@SuppressWarnings("unlikely-arg-type")
 	public SuppLine (File file, String[] name) {
 		String filename=file.getName();
 		try {

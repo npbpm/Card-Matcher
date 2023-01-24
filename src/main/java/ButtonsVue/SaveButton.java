@@ -16,6 +16,7 @@ import CameraVue.Camera;
  * changes the value of the clicked_save boolean in the Camera class to true.
  * 
  */
+@SuppressWarnings("serial")
 public class SaveButton extends JButton {
 	private Camera camera;
 

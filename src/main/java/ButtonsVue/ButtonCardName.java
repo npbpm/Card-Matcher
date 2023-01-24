@@ -30,6 +30,7 @@ import net.miginfocom.swing.MigLayout;
  * It uses the OpenCV library to save the card image as well.
  * 
  */
+@SuppressWarnings("serial")
 public class ButtonCardName extends JFrame {
 
 	private JPanel contentPane;
@@ -79,6 +80,7 @@ public class ButtonCardName extends JFrame {
 		txtrChoisissez.setEditable(false);
 		contentPane.add(txtrChoisissez, "cell 6 0,alignx left,aligny top");
 
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		final JComboBox ListeNombre = new JComboBox(itemsNombre);
 
 		contentPane.add(ListeNombre, "cell 8 0,alignx left,aligny center");

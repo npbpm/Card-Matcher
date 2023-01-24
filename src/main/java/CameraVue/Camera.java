@@ -213,15 +213,13 @@ public class Camera extends JFrame {
 
 					// test sift capture test + image bdd
 
-					// test poker
-					Imgcodecs imageCodecs = new Imgcodecs();
+					
 
 					// Boucle pour comparer la carte a toutes les cartes de la BDD
 
 					String[] imagesPath = BDD.list();
 					Integer compteur = 0;
 					double max_rate = 0;
-					Mat im_proche = new Mat();
 					String bestMatch = "";
 					String resultName = new String();
 					for (String imgPath : imagesPath) {
@@ -231,7 +229,7 @@ public class Camera extends JFrame {
 						// et donc on n'as que le dernier résultat.
 						compteur++;
 						File currentImg = new File(BDD.getPath(), imgPath);
-						Mat img = imageCodecs.imread(currentImg.getPath());
+						Mat img = Imgcodecs.imread(currentImg.getPath());
 
 						Mat outImg = sif.run(bw, img);
 						// On store l'image montrant la comparaison dans le dossier test
@@ -240,7 +238,6 @@ public class Camera extends JFrame {
 
 						if (sif.rate > max_rate) {
 							max_rate = sif.rate;
-							im_proche = img;
 							resultName = currentImg.getPath();
 							bestMatch = userDirectory + "/TestResults/" + getImName() + "_Test_Result"
 									+ compteur.toString() + ".jpg";
